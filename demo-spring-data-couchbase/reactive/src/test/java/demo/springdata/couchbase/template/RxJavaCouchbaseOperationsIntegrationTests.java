@@ -15,13 +15,9 @@
  */
 package demo.springdata.couchbase.template;
 
-import static org.assertj.core.api.Assertions.*;
-
+import com.couchbase.client.java.query.N1qlQuery;
+import com.couchbase.client.java.view.ViewQuery;
 import demo.springdata.couchbase.model.Airline;
-//import example.springdata.couchbase.util.CouchbaseAvailableRule;
-import rx.Observable;
-import rx.observers.AssertableSubscriber;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,9 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.couchbase.core.RxJavaCouchbaseOperations;
 import org.springframework.test.context.junit4.SpringRunner;
+import rx.Observable;
+import rx.observers.AssertableSubscriber;
 
-import com.couchbase.client.java.query.N1qlQuery;
-import com.couchbase.client.java.view.ViewQuery;
+import static org.assertj.core.api.Assertions.assertThat;
+
+//import example.springdata.couchbase.util.CouchbaseAvailableRule;
 
 /**
  * Integration tests showing basic CRUD operations through
@@ -46,62 +45,63 @@ public class RxJavaCouchbaseOperationsIntegrationTests {
 //	@ClassRule //
 //	public static CouchbaseAvailableRule COUCHBASE = CouchbaseAvailableRule.onLocalhost();
 
-	@Autowired RxJavaCouchbaseOperations operations;
+    @Autowired
+    RxJavaCouchbaseOperations operations;
 
-	@Before
-	public void before() {
-		operations.findById("LH", Airline.class).flatMap(operations::remove).test().awaitTerminalEvent();
-	}
+    @Before
+    public void before() {
+        operations.findById("LH", Airline.class).flatMap(operations::remove).test().awaitTerminalEvent();
+    }
 
-	/**
-	 * The derived query executes a N1QL query emitting a single element.
-	 */
-	@Test
-	public void shouldFindAirlineN1ql() {
+    /**
+     * The derived query executes a N1QL query emitting a single element.
+     */
+    @Test
+    public void shouldFindAirlineN1ql() {
 
-		String n1ql = "SELECT META(`travel-sample`).id AS _ID, META(`travel-sample`).cas AS _CAS, `travel-sample`.* " + //
-				"FROM `travel-sample` " + //
-				"WHERE (`iata` = \"TQ\") AND `_class` = \"example.springdata.couchbase.model.Airline\"";
+        String n1ql = "SELECT META(`travel-sample`).id AS _ID, META(`travel-sample`).cas AS _CAS, `travel-sample`.* " + //
+                "FROM `travel-sample` " + //
+                "WHERE (`iata` = \"TQ\") AND `_class` = \"example.springdata.couchbase.model.Airline\"";
 
-		AssertableSubscriber<Airline> subscriber = operations.findByN1QL(N1qlQuery.simple(n1ql), Airline.class) //
-				.test() //
-				.awaitTerminalEvent() //
-				.assertCompleted();
+        AssertableSubscriber<Airline> subscriber = operations.findByN1QL(N1qlQuery.simple(n1ql), Airline.class) //
+                .test() //
+                .awaitTerminalEvent() //
+                .assertCompleted();
 
-		assertThat(subscriber.getOnNextEvents()).hasSize(1);
-		assertThat(subscriber.getOnNextEvents().get(0).getCallsign()).isEqualTo("TXW");
-	}
+        assertThat(subscriber.getOnNextEvents()).hasSize(1);
+        assertThat(subscriber.getOnNextEvents().get(0).getCallsign()).isEqualTo("TXW");
+    }
 
-	/**
-	 * Find all {@link Airline}s applying the {@code airlines/all} view.
-	 */
-	@Test
-	public void shouldFindByView() {
+    /**
+     * Find all {@link Airline}s applying the {@code airlines/all} view.
+     */
+    @Test
+    public void shouldFindByView() {
 
-		Observable<Airline> airlines = operations.findByView(ViewQuery.from("airlines", "all"), Airline.class);
+        Observable<Airline> airlines = operations.findByView(ViewQuery.from("airlines", "all"), Airline.class);
 
-		airlines.test().awaitTerminalEvent().assertValueCount(187);
-	}
+        airlines.test().awaitTerminalEvent().assertValueCount(187);
+    }
 
-	/**
-	 * Created elements are emitted by {@link RxJavaCouchbaseOperations#save(Object)}.
-	 */
-	@Test
-	public void shouldCreateAirline() {
+    /**
+     * Created elements are emitted by {@link RxJavaCouchbaseOperations#save(Object)}.
+     */
+    @Test
+    public void shouldCreateAirline() {
 
-		Airline airline = new Airline();
+        Airline airline = new Airline();
 
-		airline.setId("LH");
-		airline.setIataCode("LH");
-		airline.setIcao("DLH");
-		airline.setCallsign("Lufthansa");
-		airline.setName("Lufthansa");
-		airline.setCountry("Germany");
+        airline.setId("LH");
+        airline.setIataCode("LH");
+        airline.setIcao("DLH");
+        airline.setCallsign("Lufthansa");
+        airline.setName("Lufthansa");
+        airline.setCountry("Germany");
 
-		Observable<Airline> single = operations.save(airline) //
-				.map(Airline::getId) //
-				.flatMap(id -> operations.findById(id, Airline.class));
+        Observable<Airline> single = operations.save(airline) //
+                .map(Airline::getId) //
+                .flatMap(id -> operations.findById(id, Airline.class));
 
-		single.test().awaitTerminalEvent().assertResult(airline);
-	}
+        single.test().awaitTerminalEvent().assertResult(airline);
+    }
 }
