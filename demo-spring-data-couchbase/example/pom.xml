@@ -9,18 +9,14 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
-	<artifactId>spring-data-couchbase-example</artifactId>
-	<name>Basic sample for Spring Data Couchbase</name>
-	<description>Small sample project showing the usage of Spring Data Couchbase.</description>
-
 	<dependencies>
 
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>spring-data-couchbase-example-utils</artifactId>
-			<version>${project.version}</version>
-			<scope>test</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>${project.groupId}</groupId>-->
+<!--			<artifactId>spring-data-couchbase-example-utils</artifactId>-->
+<!--			<version>${project.version}</version>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
 
 	</dependencies>
 

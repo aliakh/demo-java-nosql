@@ -18,7 +18,7 @@ package example.springdata.couchbase.template;
 import static org.assertj.core.api.Assertions.*;
 
 import example.springdata.couchbase.model.Airline;
-import example.springdata.couchbase.util.CouchbaseAvailableRule;
+//import example.springdata.couchbase.util.CouchbaseAvailableRule;
 import rx.Observable;
 import rx.observers.AssertableSubscriber;
 
@@ -44,8 +44,8 @@ import com.couchbase.client.java.view.ViewQuery;
 @SpringBootTest
 public class RxJavaCouchbaseOperationsIntegrationTests {
 
-	@ClassRule //
-	public static CouchbaseAvailableRule COUCHBASE = CouchbaseAvailableRule.onLocalhost();
+//	@ClassRule //
+//	public static CouchbaseAvailableRule COUCHBASE = CouchbaseAvailableRule.onLocalhost();
 
 	@Autowired RxJavaCouchbaseOperations operations;
 

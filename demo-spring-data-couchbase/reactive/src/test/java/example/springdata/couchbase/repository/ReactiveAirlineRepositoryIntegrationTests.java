@@ -18,7 +18,7 @@ package example.springdata.couchbase.repository;
 import static org.assertj.core.api.Assertions.*;
 
 import example.springdata.couchbase.model.Airline;
-import example.springdata.couchbase.util.CouchbaseAvailableRule;
+//import example.springdata.couchbase.util.CouchbaseAvailableRule;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -39,9 +39,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ReactiveAirlineRepositoryIntegrationTests {
-
-	@ClassRule //
-	public static CouchbaseAvailableRule COUCHBASE = CouchbaseAvailableRule.onLocalhost();
 
 	@Autowired ReactiveAirlineRepository airlineRepository;
 
