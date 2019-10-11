@@ -10,3 +10,7 @@
   * username: "users"
   * password: "travel-sample"
   * roles: "travel-sample", "Application Access"
+
+* Open IntelliJ IDEA
+* Go to File > Settings > Plugins
+* Install Lombok plugin
