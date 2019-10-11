@@ -13,8 +13,6 @@ import reactor.test.StepVerifier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//import example.springdata.couchbase.util.CouchbaseAvailableRule;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ReactiveAirlineRepositoryIntegrationTests {
