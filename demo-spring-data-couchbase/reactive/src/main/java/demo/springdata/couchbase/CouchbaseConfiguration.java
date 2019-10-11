@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package example.springdata.couchbase;
+package demo.springdata.couchbase;
 
-import example.springdata.couchbase.model.Airline;
+import demo.springdata.couchbase.model.Airline;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;

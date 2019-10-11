@@ -13,25 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package example.springdata.couchbase.repository;
+package demo.springdata.couchbase.repository;
 
-import example.springdata.couchbase.model.Airline;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
+import demo.springdata.couchbase.model.Airline;
+
+import java.util.List;
 
 import org.springframework.data.couchbase.core.query.N1qlPrimaryIndexed;
 import org.springframework.data.couchbase.core.query.View;
 import org.springframework.data.couchbase.core.query.ViewIndexed;
-import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import org.springframework.data.repository.CrudRepository;
 
 /**
  * Repository interface to manage {@link Airline} instances.
  *
+ * @author Chandana Kithalagama
  * @author Mark Paluch
  */
 @N1qlPrimaryIndexed
 @ViewIndexed(designDoc = "airlines")
-public interface ReactiveAirlineRepository extends ReactiveCrudRepository<Airline, String> {
+public interface AirlineRepository extends CrudRepository<Airline, String> {
 
 	/**
 	 * Derived query selecting by {@code iataCode}.
@@ -39,7 +40,7 @@ public interface ReactiveAirlineRepository extends ReactiveCrudRepository<Airlin
 	 * @param code
 	 * @return
 	 */
-	Mono<Airline> findAirlineByIataCode(String code);
+	Airline findAirlineByIataCode(String code);
 
 	/**
 	 * Query method using {@code airlines/all} view.
@@ -47,5 +48,5 @@ public interface ReactiveAirlineRepository extends ReactiveCrudRepository<Airlin
 	 * @return
 	 */
 	@View(designDocument = "airlines", viewName = "all")
-	Flux<Airline> findAllBy();
+	List<Airline> findAllBy();
 }

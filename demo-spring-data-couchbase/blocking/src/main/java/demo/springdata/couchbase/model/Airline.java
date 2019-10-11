@@ -1,4 +1,4 @@
-package example.springdata.couchbase.model;
+package demo.springdata.couchbase.model;
 
 import com.couchbase.client.java.repository.annotation.Field;
 import com.couchbase.client.java.repository.annotation.Id;

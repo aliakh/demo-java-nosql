@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package example.springdata.couchbase.template;
+package demo.springdata.couchbase.template;
 
 import static org.assertj.core.api.Assertions.*;
 
-import example.springdata.couchbase.model.Airline;
+import demo.springdata.couchbase.model.Airline;
 //import example.springdata.couchbase.util.CouchbaseAvailableRule;
 import rx.Observable;
 import rx.observers.AssertableSubscriber;
 
 import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
