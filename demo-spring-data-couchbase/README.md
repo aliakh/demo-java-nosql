@@ -4,10 +4,9 @@
 * Go to http://127.0.0.1:8091
 * "Setup New Cluster"
 * Go to http://127.0.0.1:8091
+* Click "Settings", "Sample Buckets"
+* Install "travel-sample" sample
 * Click "Security", "Add User"
   * username: "users"
-  * password: "password"
-  * roles: Full Admin
-* Go to http://127.0.0.1:8091
-* Click "Buckets", "Add Bucket"
-  * name: "users"
+  * password: "travel-sample"
+  * roles: "travel-sample", "Application Access"
