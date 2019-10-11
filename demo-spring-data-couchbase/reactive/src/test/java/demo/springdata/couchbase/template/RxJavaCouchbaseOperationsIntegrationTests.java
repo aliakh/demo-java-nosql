@@ -20,23 +20,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class RxJavaCouchbaseOperationsIntegrationTests {
 
     @Autowired
-    RxJavaCouchbaseOperations operations;
+    RxJavaCouchbaseOperations rxJavaCouchbaseOperations;
 
     @Before
     public void before() {
-        operations.findById("LH", Airline.class).flatMap(operations::remove).test().awaitTerminalEvent();
+        rxJavaCouchbaseOperations.findById("LH", Airline.class).flatMap(rxJavaCouchbaseOperations::remove).test().awaitTerminalEvent();
     }
 
     @Test
     public void shouldFindAirlineN1ql() {
+        String n1ql = "SELECT META(`travel-sample`).id AS _ID, META(`travel-sample`).cas AS _CAS, `travel-sample`.* " +
+                "FROM `travel-sample` " +
+                "WHERE (`iata` = \"TQ\") AND `_class` = \"demo.springdata.couchbase.model.Airline\"";
 
-        String n1ql = "SELECT META(`travel-sample`).id AS _ID, META(`travel-sample`).cas AS _CAS, `travel-sample`.* " + //
-                "FROM `travel-sample` " + //
-                "WHERE (`iata` = \"TQ\") AND `_class` = \"example.springdata.couchbase.model.Airline\"";
-
-        AssertableSubscriber<Airline> subscriber = operations.findByN1QL(N1qlQuery.simple(n1ql), Airline.class) //
-                .test() //
-                .awaitTerminalEvent() //
+        AssertableSubscriber<Airline> subscriber = rxJavaCouchbaseOperations.findByN1QL(N1qlQuery.simple(n1ql), Airline.class)
+                .test()
+                .awaitTerminalEvent()
                 .assertCompleted();
 
         assertThat(subscriber.getOnNextEvents()).hasSize(1);
@@ -45,15 +44,13 @@ public class RxJavaCouchbaseOperationsIntegrationTests {
 
     @Test
     public void shouldFindByView() {
-
-        Observable<Airline> airlines = operations.findByView(ViewQuery.from("airlines", "all"), Airline.class);
+        Observable<Airline> airlines = rxJavaCouchbaseOperations.findByView(ViewQuery.from("airlines", "all"), Airline.class);
 
         airlines.test().awaitTerminalEvent().assertValueCount(187);
     }
 
     @Test
     public void shouldCreateAirline() {
-
         Airline airline = new Airline();
 
         airline.setId("LH");
@@ -63,9 +60,9 @@ public class RxJavaCouchbaseOperationsIntegrationTests {
         airline.setName("Lufthansa");
         airline.setCountry("Germany");
 
-        Observable<Airline> single = operations.save(airline) //
-                .map(Airline::getId) //
-                .flatMap(id -> operations.findById(id, Airline.class));
+        Observable<Airline> single = rxJavaCouchbaseOperations.save(airline)
+                .map(Airline::getId)
+                .flatMap(id -> rxJavaCouchbaseOperations.findById(id, Airline.class));
 
         single.test().awaitTerminalEvent().assertResult(airline);
     }
