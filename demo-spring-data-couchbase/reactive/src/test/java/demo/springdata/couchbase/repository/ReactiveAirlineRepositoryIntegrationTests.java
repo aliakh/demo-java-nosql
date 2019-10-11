@@ -1,18 +1,3 @@
-/*
- * Copyright 2017-2018 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package demo.springdata.couchbase.repository;
 
 import static org.assertj.core.api.Assertions.*;
@@ -30,11 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.couchbase.core.CouchbaseOperations;
 import org.springframework.test.context.junit4.SpringRunner;
 
-/**
- * Integration tests showing basic CRUD operations through {@link ReactiveAirlineRepository}
- *
- * @author Mark Paluch
- */
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class ReactiveAirlineRepositoryIntegrationTests {
@@ -53,9 +33,6 @@ public class ReactiveAirlineRepositoryIntegrationTests {
 		}
 	}
 
-	/**
-	 * The derived query executes a N1QL query emitting a single element.
-	 */
 	@Test
 	public void shouldFindAirlineN1ql() {
 
@@ -65,11 +42,6 @@ public class ReactiveAirlineRepositoryIntegrationTests {
 		}).verifyComplete();
 	}
 
-	/**
-	 * The derived query executes a N1QL query and the emitted element is used to invoke
-	 * {@link org.springframework.data.repository.reactive.ReactiveCrudRepository#findById(Object)} for an Id-based
-	 * lookup. Queries without a result do not emit a value.
-	 */
 	@Test
 	public void shouldFindById() {
 
@@ -85,18 +57,11 @@ public class ReactiveAirlineRepositoryIntegrationTests {
 		StepVerifier.create(airlineRepository.findById("unknown")).verifyComplete();
 	}
 
-	/**
-	 * Find all {@link Airline}s applying the {@code airlines/all} view.
-	 */
 	@Test
 	public void shouldFindByView() {
 		StepVerifier.create(airlineRepository.findAllBy()).expectNextCount(187).verifyComplete();
 	}
 
-	/**
-	 * Created elements are emitted by the
-	 * {@link org.springframework.data.repository.reactive.ReactiveCrudRepository#save(Object)} method.
-	 */
 	@Test
 	public void shouldCreateAirline() {
 
