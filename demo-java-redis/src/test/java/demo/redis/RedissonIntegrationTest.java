@@ -5,16 +5,26 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.redisson.Redisson;
 import org.redisson.RedissonMultiLock;
-import org.redisson.api.*;
+import org.redisson.api.RAtomicLong;
+import org.redisson.api.RBatch;
+import org.redisson.api.RBucket;
+import org.redisson.api.RKeys;
+import org.redisson.api.RList;
+import org.redisson.api.RLiveObjectService;
+import org.redisson.api.RLock;
+import org.redisson.api.RMap;
+import org.redisson.api.RRemoteService;
+import org.redisson.api.RScript;
+import org.redisson.api.RSet;
+import org.redisson.api.RTopic;
+import org.redisson.api.RedissonClient;
 import org.redisson.client.RedisClient;
 import org.redisson.client.RedisConnection;
 import org.redisson.client.codec.StringCodec;
 import org.redisson.client.protocol.RedisCommands;
 import org.redisson.config.Config;
-import redis.embedded.RedisServer;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -24,30 +34,30 @@ import java.util.stream.StreamSupport;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class RedissonIntegrationTest {
+public class RedissonIntegrationTest extends RedisTest {
 
-    private static RedisServer redisServer;
+    //    private static RedisServer redisServer;
     private static RedissonClient client;
 
     @BeforeClass
     public static void setUp() throws IOException {
-        ServerSocket s = new ServerSocket(0);
-        int port = s.getLocalPort();
-        s.close();
-
-        redisServer = new RedisServer(port);
-        redisServer.start();
+//        ServerSocket s = new ServerSocket(0);
+//        int port = s.getLocalPort();
+//        s.close();
+//
+//        redisServer = new RedisServer(port);
+//        redisServer.start();
 
         Config config = new Config();
         config.useSingleServer()
-                .setAddress("127.0.0.1:"+port);
+                .setAddress("127.0.0.1:" + port);
 
         client = Redisson.create(config);
     }
 
     @AfterClass
     public static void destroy() {
-        redisServer.stop();
+//        redisServer.stop();
         if (client != null) {
             client.shutdown();
         }
@@ -74,12 +84,12 @@ public class RedissonIntegrationTest {
         RKeys keys = client.getKeys();
 
         Iterable<String> keysWithPattern
-          = keys.getKeysByPattern("key*");
+                = keys.getKeysByPattern("key*");
 
         List keyWithPatternList
-          = StreamSupport.stream(
-            keysWithPattern.spliterator(),
-              false).collect(Collectors.toList());
+                = StreamSupport.stream(
+                keysWithPattern.spliterator(),
+                false).collect(Collectors.toList());
 
         assertTrue(keyWithPatternList.size() == 3);
     }
@@ -94,16 +104,16 @@ public class RedissonIntegrationTest {
         Ledger returnedLedger = bucket.get();
 
         assertTrue(
-          returnedLedger != null
-            && returnedLedger.getName().equals("ledger1"));
+                returnedLedger != null
+                        && returnedLedger.getName().equals("ledger1"));
     }
 
     @Test
-    public void givenALong_thenSaveLongToRedisAndAtomicallyIncrement(){
+    public void givenALong_thenSaveLongToRedisAndAtomicallyIncrement() {
         Long value = 5L;
 
         RAtomicLong atomicLong
-          = client.getAtomicLong("myAtomicLong");
+                = client.getAtomicLong("myAtomicLong");
         atomicLong.set(value);
         Long returnValue = atomicLong.incrementAndGet();
 
@@ -119,14 +129,14 @@ public class RedissonIntegrationTest {
 
         RTopic<CustomMessage> publishTopic = client.getTopic("baeldung");
         long clientsReceivedMessage
-          = publishTopic.publish(new CustomMessage("This is a message"));
+                = publishTopic.publish(new CustomMessage("This is a message"));
 
         assertEquals("This is a message", future.get());
 
     }
 
     @Test
-    public void givenAMap_thenSaveMapToRedis(){
+    public void givenAMap_thenSaveMapToRedis() {
         RMap<String, Ledger> map = client.getMap("ledger");
         map.put("123", new Ledger("ledger"));
 
@@ -134,7 +144,7 @@ public class RedissonIntegrationTest {
     }
 
     @Test
-    public void givenASet_thenSaveSetToRedis(){
+    public void givenASet_thenSaveSetToRedis() {
         RSet<Ledger> ledgerSet = client.getSet("ledgerSet");
         ledgerSet.add(new Ledger("ledger"));
 
@@ -142,7 +152,7 @@ public class RedissonIntegrationTest {
     }
 
     @Test
-    public void givenAList_thenSaveListToRedis(){
+    public void givenAList_thenSaveListToRedis() {
         RList<Ledger> ledgerList = client.getList("ledgerList");
         ledgerList.add(new Ledger("ledger"));
 
@@ -150,7 +160,7 @@ public class RedissonIntegrationTest {
     }
 
     @Test
-    public void givenLockSet_thenEnsureCanUnlock(){
+    public void givenLockSet_thenEnsureCanUnlock() {
         RLock lock = client.getLock("lock");
         lock.lock();
         assertTrue(lock.isLocked());
@@ -160,7 +170,7 @@ public class RedissonIntegrationTest {
     }
 
     @Test
-    public void givenMultipleLocksSet_thenEnsureAllCanUnlock(){
+    public void givenMultipleLocksSet_thenEnsureAllCanUnlock() {
         RedissonClient clientInstance1 = Redisson.create();
         RedissonClient clientInstance2 = Redisson.create();
         RedissonClient clientInstance3 = Redisson.create();
@@ -178,7 +188,7 @@ public class RedissonIntegrationTest {
     }
 
     @Test
-    public void givenRemoteServiceMethodRegistered_thenInvokeMethod(){
+    public void givenRemoteServiceMethodRegistered_thenInvokeMethod() {
         RRemoteService remoteService = client.getRemoteService();
         LedgerServiceImpl ledgerServiceImpl = new LedgerServiceImpl();
 
@@ -194,7 +204,7 @@ public class RedissonIntegrationTest {
     }
 
     @Test
-    public void givenLiveObjectPersisted_thenGetLiveObject(){
+    public void givenLiveObjectPersisted_thenGetLiveObject() {
         RLiveObjectService service = client.getLiveObjectService();
 
         LedgerLiveObject ledger = new LedgerLiveObject();
@@ -203,13 +213,13 @@ public class RedissonIntegrationTest {
         ledger = service.persist(ledger);
 
         LedgerLiveObject returnLedger
-          = service.get(LedgerLiveObject.class, "ledger1");
+                = service.get(LedgerLiveObject.class, "ledger1");
 
         assertTrue(ledger.getName().equals(returnLedger.getName()));
     }
 
     @Test
-    public void givenMultipleOperations_thenDoAllAtomically(){
+    public void givenMultipleOperations_thenDoAllAtomically() {
         RBatch batch = client.createBatch();
         batch.getMap("ledgerMap").fastPutAsync("1", "2");
         batch.getMap("ledgerMap").putAsync("2", "5");
@@ -221,7 +231,7 @@ public class RedissonIntegrationTest {
     }
 
     @Test
-    public void givenLUAScript_thenExecuteScriptOnRedis(){
+    public void givenLUAScript_thenExecuteScriptOnRedis() {
         client.getBucket("foo").set("bar");
         String result = client.getScript().eval(RScript.Mode.READ_ONLY,
                 "return redis.call('get', 'foo')", RScript.ReturnType.VALUE);
@@ -230,7 +240,7 @@ public class RedissonIntegrationTest {
     }
 
     @Test
-    public void givenLowLevelRedisCommands_thenExecuteLowLevelCommandsOnRedis(){
+    public void givenLowLevelRedisCommands_thenExecuteLowLevelCommandsOnRedis() {
         RedisClient client = new RedisClient("localhost", 6379);
         RedisConnection conn = client.connect();
         conn.sync(StringCodec.INSTANCE, RedisCommands.SET, "test", 0);

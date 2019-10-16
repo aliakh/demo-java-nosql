@@ -1,51 +1,47 @@
 package demo.redis;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.Transaction;
-import redis.embedded.RedisServer;
 
-public class JedisIntegrationTest {
+import java.io.IOException;
+import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+public class JedisIntegrationTest extends RedisTest {
 
     private static Jedis jedis;
-    private static RedisServer redisServer;
-    private static int port;
+//    private static RedisServer redisServer;
+//    private static int port;
 
     @BeforeClass
     public static void setUp() throws IOException {
-        
-        // Take an available port
-        ServerSocket s = new ServerSocket(0);
-        port = s.getLocalPort();
-        s.close();
-        
-        redisServer = new RedisServer(port);
-        redisServer.start();
-        
+
+//        // Take an available port
+//        ServerSocket s = new ServerSocket(0);
+//        port = s.getLocalPort();
+//        s.close();
+//
+//        redisServer = new RedisServer(port);
+//        redisServer.start();
+
         // Configure JEDIS
         jedis = new Jedis("localhost", port);
     }
 
-    @AfterClass
-    public static void destroy() {
-        redisServer.stop();
-    }
+//    @AfterClass
+//    public static void destroy() {
+//        redisServer.stop();
+//    }
 
     @After
     public void flush() {
