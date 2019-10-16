@@ -10,9 +10,11 @@ import org.redisson.client.RedisClient;
 import org.redisson.client.RedisConnection;
 import org.redisson.client.codec.StringCodec;
 import org.redisson.client.protocol.RedisCommands;
+import org.redisson.config.Config;
 import redis.embedded.RedisServer;
 
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -29,9 +31,18 @@ public class RedissonIntegrationTest {
 
     @BeforeClass
     public static void setUp() throws IOException {
-        redisServer = new RedisServer(6379);
+        ServerSocket s = new ServerSocket(0);
+        int port = s.getLocalPort();
+        s.close();
+
+        redisServer = new RedisServer(port);
         redisServer.start();
-        client = Redisson.create();
+
+        Config config = new Config();
+        config.useSingleServer()
+                .setAddress("127.0.0.1:"+port);
+
+        client = Redisson.create(config);
     }
 
     @AfterClass

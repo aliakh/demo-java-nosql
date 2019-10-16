@@ -1,7 +1,5 @@
-<?xml version="1.0"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>demo</groupId>
@@ -9,16 +7,28 @@
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
+    <properties>
+        <embedded-redis.version>0.6</embedded-redis.version>
+        <jedis.version>2.9.0</jedis.version>
+        <lettuce-core.version>5.0.1.RELEASE</lettuce-core.version>
+        <redisson.version>3.3.0</redisson.version>
+    </properties>
+
     <dependencies>
+        <dependency>
+            <groupId>com.github.kstyrc</groupId>
+            <artifactId>embedded-redis</artifactId>
+            <version>${embedded-redis.version}</version>
+        </dependency>
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
             <version>${jedis.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.kstyrc</groupId>
-            <artifactId>embedded-redis</artifactId>
-            <version>${embedded-redis.version}</version>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>${lettuce-core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.redisson</groupId>
@@ -26,16 +36,17 @@
             <version>${redisson.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.lettuce</groupId>
-            <artifactId>lettuce-core</artifactId>
-            <version>${lettuce-core.version}</version>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>1.1.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
-    <properties>
-        <jedis.version>2.9.0</jedis.version>
-        <embedded-redis.version>0.6</embedded-redis.version>
-        <redisson.version>3.3.0</redisson.version>
-        <lettuce-core.version>5.0.1.RELEASE</lettuce-core.version>
-    </properties>
 </project>

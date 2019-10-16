@@ -16,7 +16,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.embedded.RedisServer;
 
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +37,16 @@ public class LettuceIntegrationLiveTest {
     private static RedisClient redisClient;
 
     @BeforeClass
-    public static void setUp() {
+    public static void setUp() throws IOException {
+        ServerSocket s = new ServerSocket(0);
+        int port = s.getLocalPort();
+        s.close();
+
+        RedisServer redisServer = new RedisServer(port);
+        redisServer.start();
+
         // Docker defaults to mapping redis port to 32768
-        redisClient = RedisClient.create("redis://localhost:32768/");
+        redisClient = RedisClient.create("redis://localhost:"+port+"/");
         redisConnection = redisClient.connect();
     }
 
