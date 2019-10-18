@@ -7,27 +7,21 @@
     <packaging>jar</packaging>
     <version>0.0.1-SNAPSHOT</version>
 
-    <properties>
-        <jedis.version>2.9.0</jedis.version>
-        <lettuce-core.version>5.0.1.RELEASE</lettuce-core.version>
-        <redisson.version>3.3.0</redisson.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
-            <version>${jedis.version}</version>
+            <version>2.10.2</version>
         </dependency>
         <dependency>
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>
-            <version>${lettuce-core.version}</version>
+            <version>5.0.1.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>
-            <version>${redisson.version}</version>
+            <version>3.3.0</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>

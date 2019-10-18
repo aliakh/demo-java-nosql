@@ -3,19 +3,14 @@ package demo.redis.jedis;
 import demo.redis.IntegrationTest;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.Transaction;
 
 import java.io.IOException;
-import java.time.Duration;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,12 +20,13 @@ import static org.junit.Assert.assertTrue;
 
 public class JedisIntegrationTest extends IntegrationTest {
 
-    private static Jedis jedis;
+    private static Jedis client;
 
     @BeforeClass
     public static void beforeClass() throws IOException {
         IntegrationTest.beforeClass();
-        jedis = new Jedis("localhost", getRedisPort());
+
+        client = new Jedis("localhost", getRedisPort());
     }
 
     @AfterClass
@@ -40,7 +36,7 @@ public class JedisIntegrationTest extends IntegrationTest {
 
     @After
     public void afterMethod() {
-        jedis.flushAll();
+        client.flushAll();
     }
 
     @Test
@@ -48,65 +44,65 @@ public class JedisIntegrationTest extends IntegrationTest {
         String key = "key";
         String value = "value";
 
-        jedis.set(key, value);
+        client.set(key, value);
 
-        String actualValue = jedis.get(key);
+        String actualValue = client.get(key);
         assertEquals(value, actualValue);
     }
 
     @Test
     public void testList() {
-        String queue = "list";
+        String key = "list";
 
         String value1 = "Alpha";
         String value2 = "Beta";
         String value3 = "Gamma";
 
-        jedis.lpush(queue, value1, value2);
+        client.lpush(key, value1, value2);
 
-        String actualValue1 = jedis.rpop(queue);
+        String actualValue1 = client.rpop(key);
         assertEquals(value1, actualValue1);
 
-        jedis.lpush(queue, value3);
+        client.lpush(key, value3);
 
-        String actualValue2 = jedis.rpop(queue);
-        String actualValue3 = jedis.rpop(queue);
+        String actualValue2 = client.rpop(key);
+        String actualValue3 = client.rpop(key);
 
         assertEquals(value2, actualValue2);
         assertEquals(value3, actualValue3);
 
-        String actualValue4 = jedis.rpop(queue);
+        String actualValue4 = client.rpop(key);
         assertNull(actualValue4);
     }
 
     @Test
     public void testSet() {
-        String set = "set";
+        String key = "set";
 
         String value1 = "Alpha";
         String value2 = "Beta";
         String value3 = "Beta";
 
-        jedis.sadd(set, value1);
+        client.sadd(key, value1);
 
-        Set<String> actualSet1 = jedis.smembers(set);
+        Set<String> actualSet1 = client.smembers(key);
         assertEquals(1, actualSet1.size());
 
-        jedis.sadd(set, value2);
-        Set<String> actualSet2 = jedis.smembers(set);
+        client.sadd(key, value2);
+        Set<String> actualSet2 = client.smembers(key);
         assertEquals(2, actualSet2.size());
 
-        jedis.sadd(set, value3);
-        Set<String> actualSet3 = jedis.smembers(set);
+        client.sadd(key, value3);
+        Set<String> actualSet3 = client.smembers(key);
         assertEquals(2, actualSet3.size());
 
-        boolean value3exists = jedis.sismember(set, value3);
-        assertTrue(value3exists);
+        boolean value3Exists = client.sismember(key, value3);
+        assertTrue(value3Exists);
     }
 
     @Test
     public void testHash() {
-        String key = "key";
+        String key = "hash";
 
         String field1 = "A";
         String value1 = "Alpha";
@@ -114,13 +110,13 @@ public class JedisIntegrationTest extends IntegrationTest {
         String field2 = "B";
         String value2 = "Beta";
 
-        jedis.hset(key, field1, value1);
-        jedis.hset(key, field2, value2);
+        client.hset(key, field1, value1);
+        client.hset(key, field2, value2);
 
-        String actualValue1 = jedis.hget(key, field1);
+        String actualValue1 = client.hget(key, field1);
         assertEquals(value1, actualValue1);
 
-        Map<String, String> fields = jedis.hgetAll(key);
+        Map<String, String> fields = client.hgetAll(key);
         String actualValue2 = fields.get(field2);
 
         assertEquals(value2, actualValue2);
@@ -128,96 +124,67 @@ public class JedisIntegrationTest extends IntegrationTest {
 
     @Test
     public void testSortedSet() {
-        String key = "sorted-set";
+        String key = "sorted set";
 
-         String value1 = "PlayerOne";
-         String value2 = "PlayerTwo";
-         String value3 = "PlayerThree";
+        String value1 = "Alpha";
+        String value2 = "Beta";
+        String value3 = "Gamma";
 
-        jedis.zadd(key, 200.0, value1);
-        jedis.zadd(key, 100.0, value2);
-        jedis.zadd(key, 300.0, value3);
+        client.zadd(key, 2.0, value1);
+        client.zadd(key, 1.0, value2);
+        client.zadd(key, 3.0, value3);
 
-        Set<String> actualSet = jedis.zrevrange(key, 0, 1);
+        Set<String> actualSet = client.zrevrange(key, 0, 1);
         assertEquals(value3, actualSet.iterator().next());
 
-        long value1rank = jedis.zrevrank(key, value1);
-        assertEquals(1, value1rank);
+        long value1Rank = client.zrevrank(key, value1);
+        assertEquals(1, value1Rank);
     }
 
     @Test
     public void testTransaction() {
-        String friendsPrefix = "friends#";
+        String prefix = "key";
 
-        String userOneId = "4352523";
-        String userTwoId = "5552321";
+        String suffix1 = "1";
+        String suffix2 = "2";
 
-        final String key = friendsPrefix + userOneId;
-        final String key1 = friendsPrefix + userTwoId;
+        String key1 = prefix + suffix1;
+        String key2 = prefix + suffix2;
 
-        Transaction t = jedis.multi();
-        t.sadd(key, userTwoId);
-        t.sadd(key1, userOneId);
-        t.exec();
+        Transaction transaction = client.multi();
+        transaction.sadd(key1, suffix1);
+        transaction.sadd(key2, suffix2);
+        transaction.exec();
 
-        boolean exists = jedis.sismember(key, userTwoId);
-        assertTrue(exists);
+        boolean member1Exists = client.sismember(key1, suffix1);
+        assertTrue(member1Exists);
 
-        exists = jedis.sismember(key1, userOneId);
-        assertTrue(exists);
+        boolean member2Exists = client.sismember(key2, suffix2);
+        assertTrue(member2Exists);
     }
 
     @Test
-    public void givenMultipleIndependentOperations_whenNetworkOptimizationIsImportant_thenWrapThemInAPipeline() {
-        String userOneId = "4352523";
-        String userTwoId = "4849888";
+    public void testPipeline() {
+        String key1 = "key1";
+        String value1 = "value";
 
-        Pipeline p = jedis.pipelined();
-        p.sadd("searched#" + userOneId, "paris");
-        p.zadd("ranking", 126, userOneId);
-        p.zadd("ranking", 325, userTwoId);
-        Response<Boolean> pipeExists = p.sismember("searched#" + userOneId, "paris");
-        Response<Set<String>> pipeRanking = p.zrange("ranking", 0, -1);
-        p.sync();
+        String key2 = "key2";
+        String value20 = "value20";
+        String value21 = "value21";
 
-        Assert.assertTrue(pipeExists.get());
-        assertEquals(2, pipeRanking.get().size());
-    }
+        Pipeline pipeline = client.pipelined();
 
-    @Test
-    public void givenAPoolConfiguration_thenCreateAJedisPool() {
-        final JedisPoolConfig poolConfig = buildPoolConfig();
+        pipeline.sadd(key1, value1);
+        pipeline.zadd(key2, 1.0, value20);
+        pipeline.zadd(key2, 2.0, value21);
+        Response<Boolean> value1ExistsResponse = pipeline.sismember(key1, value1);
+        Response<Set<String>> expectedSetResponse = pipeline.zrange(key2, 0, -1);
 
-        try (JedisPool jedisPool = new JedisPool(poolConfig, "localhost", getRedisPort());
-             Jedis jedis = jedisPool.getResource()) {
+        pipeline.sync();
 
-            // do simple operation to verify that the Jedis resource is working
-            // properly
-            String key = "key";
-            String value = "value";
+        assertTrue(value1ExistsResponse.get());
 
-            jedis.set(key, value);
-            String value2 = jedis.get(key);
-
-            assertEquals(value, value2);
-
-            // flush Redis
-            jedis.flushAll();
-        }
-    }
-
-    private JedisPoolConfig buildPoolConfig() {
-        final JedisPoolConfig poolConfig = new JedisPoolConfig();
-        poolConfig.setMaxTotal(128);
-        poolConfig.setMaxIdle(128);
-        poolConfig.setMinIdle(16);
-        poolConfig.setTestOnBorrow(true);
-        poolConfig.setTestOnReturn(true);
-        poolConfig.setTestWhileIdle(true);
-        poolConfig.setMinEvictableIdleTimeMillis(Duration.ofSeconds(60).toMillis());
-        poolConfig.setTimeBetweenEvictionRunsMillis(Duration.ofSeconds(30).toMillis());
-        poolConfig.setNumTestsPerEvictionRun(3);
-        poolConfig.setBlockWhenExhausted(true);
-        return poolConfig;
+        int size = expectedSetResponse.get().size();
+        assertEquals(2, size);
     }
 }
