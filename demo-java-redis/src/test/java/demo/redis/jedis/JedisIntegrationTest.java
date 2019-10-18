@@ -100,8 +100,8 @@ public class JedisIntegrationTest extends IntegrationTest {
         Set<String> actualSet3 = jedis.smembers(set);
         assertEquals(2, actualSet3.size());
 
-        boolean existsValue3 = jedis.sismember(set, value3);
-        assertTrue(existsValue3);
+        boolean value3exists = jedis.sismember(set, value3);
+        assertTrue(value3exists);
     }
 
     @Test
@@ -128,42 +128,43 @@ public class JedisIntegrationTest extends IntegrationTest {
 
     @Test
     public void testSortedSet() {
-        String key = "ranking";
+        String key = "sorted-set";
 
-        Map<String, Double> scores = new HashMap<>();
+         String value1 = "PlayerOne";
+         String value2 = "PlayerTwo";
+         String value3 = "PlayerThree";
 
-        scores.put("PlayerOne", 3000.0);
-        scores.put("PlayerTwo", 1500.0);
-        scores.put("PlayerThree", 8200.0);
+        jedis.zadd(key, 200.0, value1);
+        jedis.zadd(key, 100.0, value2);
+        jedis.zadd(key, 300.0, value3);
 
-        scores.entrySet().forEach(playerScore -> {
-            jedis.zadd(key, playerScore.getValue(), playerScore.getKey());
-        });
+        Set<String> actualSet = jedis.zrevrange(key, 0, 1);
+        assertEquals(value3, actualSet.iterator().next());
 
-        Set<String> players = jedis.zrevrange(key, 0, 1);
-        assertEquals("PlayerThree", players.iterator().next());
-
-        long rank = jedis.zrevrank(key, "PlayerOne");
-        assertEquals(1, rank);
+        long value1rank = jedis.zrevrank(key, value1);
+        assertEquals(1, value1rank);
     }
 
     @Test
-    public void givenMultipleOperationsThatNeedToBeExecutedAtomically_thenWrapThemInATransaction() {
+    public void testTransaction() {
         String friendsPrefix = "friends#";
 
         String userOneId = "4352523";
         String userTwoId = "5552321";
 
+        final String key = friendsPrefix + userOneId;
+        final String key1 = friendsPrefix + userTwoId;
+
         Transaction t = jedis.multi();
-        t.sadd(friendsPrefix + userOneId, userTwoId);
-        t.sadd(friendsPrefix + userTwoId, userOneId);
+        t.sadd(key, userTwoId);
+        t.sadd(key1, userOneId);
         t.exec();
 
-        boolean exists = jedis.sismember(friendsPrefix + userOneId, userTwoId);
-        Assert.assertTrue(exists);
+        boolean exists = jedis.sismember(key, userTwoId);
+        assertTrue(exists);
 
-        exists = jedis.sismember(friendsPrefix + userTwoId, userOneId);
-        Assert.assertTrue(exists);
+        exists = jedis.sismember(key1, userOneId);
+        assertTrue(exists);
     }
 
     @Test
