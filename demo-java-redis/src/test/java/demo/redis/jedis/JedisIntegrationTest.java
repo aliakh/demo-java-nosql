@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static org.junit.Assert.*;
+
 public class JedisIntegrationTest extends IntegrationTest {
 
     private static Jedis jedis;
@@ -40,18 +42,17 @@ public class JedisIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void givenAString_thenSaveItAsRedisStrings() {
+    public void testSetGet() {
         String key = "key";
         String value = "value";
 
         jedis.set(key, value);
-        String value2 = jedis.get(key);
 
-        Assert.assertEquals(value, value2);
+        assertEquals(value, jedis.get(key));
     }
 
     @Test
-    public void givenListElements_thenSaveThemInRedisList() {
+    public void testLpushRpop() {
         String queue = "queue#tasks";
 
         String taskOne = "firstTask";
@@ -63,13 +64,13 @@ public class JedisIntegrationTest extends IntegrationTest {
         String taskReturnedOne = jedis.rpop(queue);
 
         jedis.lpush(queue, taskThree);
-        Assert.assertEquals(taskOne, taskReturnedOne);
+        assertEquals(taskOne, taskReturnedOne);
 
         String taskReturnedTwo = jedis.rpop(queue);
         String taskReturnedThree = jedis.rpop(queue);
 
-        Assert.assertEquals(taskTwo, taskReturnedTwo);
-        Assert.assertEquals(taskThree, taskReturnedThree);
+        assertEquals(taskTwo, taskReturnedTwo);
+        assertEquals(taskThree, taskReturnedThree);
 
         String taskReturnedFour = jedis.rpop(queue);
         Assert.assertNull(taskReturnedFour);
@@ -86,15 +87,15 @@ public class JedisIntegrationTest extends IntegrationTest {
         jedis.sadd(countries, countryOne);
 
         Set<String> countriesSet = jedis.smembers(countries);
-        Assert.assertEquals(1, countriesSet.size());
+        assertEquals(1, countriesSet.size());
 
         jedis.sadd(countries, countryTwo);
         countriesSet = jedis.smembers(countries);
-        Assert.assertEquals(2, countriesSet.size());
+        assertEquals(2, countriesSet.size());
 
         jedis.sadd(countries, countryThree);
         countriesSet = jedis.smembers(countries);
-        Assert.assertEquals(2, countriesSet.size());
+        assertEquals(2, countriesSet.size());
 
         boolean exists = jedis.sismember(countries, countryThree);
         Assert.assertTrue(exists);
@@ -114,11 +115,11 @@ public class JedisIntegrationTest extends IntegrationTest {
         jedis.hset(key, field2, value2);
 
         String value3 = jedis.hget(key, field);
-        Assert.assertEquals(value, value3);
+        assertEquals(value, value3);
 
         Map<String, String> fields = jedis.hgetAll(key);
         String value4 = fields.get(field2);
-        Assert.assertEquals(value2, value4);
+        assertEquals(value2, value4);
     }
 
     @Test
@@ -136,10 +137,10 @@ public class JedisIntegrationTest extends IntegrationTest {
         });
 
         Set<String> players = jedis.zrevrange(key, 0, 1);
-        Assert.assertEquals("PlayerThree", players.iterator().next());
+        assertEquals("PlayerThree", players.iterator().next());
 
         long rank = jedis.zrevrank(key, "PlayerOne");
-        Assert.assertEquals(1, rank);
+        assertEquals(1, rank);
     }
 
     @Test
@@ -175,7 +176,7 @@ public class JedisIntegrationTest extends IntegrationTest {
         p.sync();
 
         Assert.assertTrue(pipeExists.get());
-        Assert.assertEquals(2, pipeRanking.get().size());
+        assertEquals(2, pipeRanking.get().size());
     }
 
     @Test
@@ -193,7 +194,7 @@ public class JedisIntegrationTest extends IntegrationTest {
             jedis.set(key, value);
             String value2 = jedis.get(key);
 
-            Assert.assertEquals(value, value2);
+            assertEquals(value, value2);
 
             // flush Redis
             jedis.flushAll();
