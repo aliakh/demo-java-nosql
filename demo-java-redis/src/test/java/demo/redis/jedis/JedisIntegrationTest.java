@@ -44,29 +44,30 @@ public class JedisIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void testKeyValue() {
+    public void testString() {
         String key = "key";
         String value = "value";
 
         jedis.set(key, value);
 
-        assertEquals(value, jedis.get(key));
+        String actualValue = jedis.get(key);
+        assertEquals(value, actualValue);
     }
 
     @Test
-    public void testQueue() {
-        String queue = "queue";
+    public void testList() {
+        String queue = "list";
 
-        String value1 = "A";
-        String value2 = "B";
-        String value3 = "C";
+        String value1 = "Alpha";
+        String value2 = "Beta";
+        String value3 = "Gamma";
 
         jedis.lpush(queue, value1, value2);
 
         String actualValue1 = jedis.rpop(queue);
+        assertEquals(value1, actualValue1);
 
         jedis.lpush(queue, value3);
-        assertEquals(value1, actualValue1);
 
         String actualValue2 = jedis.rpop(queue);
         String actualValue3 = jedis.rpop(queue);
@@ -82,22 +83,22 @@ public class JedisIntegrationTest extends IntegrationTest {
     public void testSet() {
         String set = "set";
 
-        String value1 = "A";
-        String value2 = "B";
-        String value3 = "B";
+        String value1 = "Alpha";
+        String value2 = "Beta";
+        String value3 = "Beta";
 
         jedis.sadd(set, value1);
 
-        Set<String> actualSet = jedis.smembers(set);
-        assertEquals(1, actualSet.size());
+        Set<String> actualSet1 = jedis.smembers(set);
+        assertEquals(1, actualSet1.size());
 
         jedis.sadd(set, value2);
-        actualSet = jedis.smembers(set);
-        assertEquals(2, actualSet.size());
+        Set<String> actualSet2 = jedis.smembers(set);
+        assertEquals(2, actualSet2.size());
 
         jedis.sadd(set, value3);
-        actualSet = jedis.smembers(set);
-        assertEquals(2, actualSet.size());
+        Set<String> actualSet3 = jedis.smembers(set);
+        assertEquals(2, actualSet3.size());
 
         boolean existsValue3 = jedis.sismember(set, value3);
         assertTrue(existsValue3);
@@ -121,6 +122,7 @@ public class JedisIntegrationTest extends IntegrationTest {
 
         Map<String, String> fields = jedis.hgetAll(key);
         String actualValue2 = fields.get(field2);
+
         assertEquals(value2, actualValue2);
     }
 
