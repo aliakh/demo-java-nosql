@@ -19,7 +19,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class JedisIntegrationTest extends IntegrationTest {
 
@@ -42,7 +44,7 @@ public class JedisIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void testSetGet() {
+    public void testKeyValue() {
         String key = "key";
         String value = "value";
 
@@ -52,78 +54,78 @@ public class JedisIntegrationTest extends IntegrationTest {
     }
 
     @Test
-    public void testLpushRpop() {
-        String queue = "queue#tasks";
+    public void testQueue() {
+        String queue = "queue";
 
-        String taskOne = "firstTask";
-        String taskTwo = "secondTask";
-        String taskThree = "thirdTask";
+        String value1 = "A";
+        String value2 = "B";
+        String value3 = "C";
 
-        jedis.lpush(queue, taskOne, taskTwo);
+        jedis.lpush(queue, value1, value2);
 
-        String taskReturnedOne = jedis.rpop(queue);
+        String actualValue1 = jedis.rpop(queue);
 
-        jedis.lpush(queue, taskThree);
-        assertEquals(taskOne, taskReturnedOne);
+        jedis.lpush(queue, value3);
+        assertEquals(value1, actualValue1);
 
-        String taskReturnedTwo = jedis.rpop(queue);
-        String taskReturnedThree = jedis.rpop(queue);
+        String actualValue2 = jedis.rpop(queue);
+        String actualValue3 = jedis.rpop(queue);
 
-        assertEquals(taskTwo, taskReturnedTwo);
-        assertEquals(taskThree, taskReturnedThree);
+        assertEquals(value2, actualValue2);
+        assertEquals(value3, actualValue3);
 
-        String taskReturnedFour = jedis.rpop(queue);
-        Assert.assertNull(taskReturnedFour);
+        String actualValue4 = jedis.rpop(queue);
+        assertNull(actualValue4);
     }
 
     @Test
-    public void givenSetElements_thenSaveThemInRedisSet() {
-        String countries = "countries";
+    public void testSet() {
+        String set = "set";
 
-        String countryOne = "Spain";
-        String countryTwo = "Ireland";
-        String countryThree = "Ireland";
+        String value1 = "A";
+        String value2 = "B";
+        String value3 = "B";
 
-        jedis.sadd(countries, countryOne);
+        jedis.sadd(set, value1);
 
-        Set<String> countriesSet = jedis.smembers(countries);
-        assertEquals(1, countriesSet.size());
+        Set<String> actualSet = jedis.smembers(set);
+        assertEquals(1, actualSet.size());
 
-        jedis.sadd(countries, countryTwo);
-        countriesSet = jedis.smembers(countries);
-        assertEquals(2, countriesSet.size());
+        jedis.sadd(set, value2);
+        actualSet = jedis.smembers(set);
+        assertEquals(2, actualSet.size());
 
-        jedis.sadd(countries, countryThree);
-        countriesSet = jedis.smembers(countries);
-        assertEquals(2, countriesSet.size());
+        jedis.sadd(set, value3);
+        actualSet = jedis.smembers(set);
+        assertEquals(2, actualSet.size());
 
-        boolean exists = jedis.sismember(countries, countryThree);
-        Assert.assertTrue(exists);
+        boolean existsValue3 = jedis.sismember(set, value3);
+        assertTrue(existsValue3);
     }
 
     @Test
-    public void givenObjectFields_thenSaveThemInRedisHash() {
-        String key = "user#1";
+    public void testHash() {
+        String key = "key";
 
-        String field = "name";
-        String value = "William";
+        String field1 = "A";
+        String value1 = "Alpha";
 
-        String field2 = "job";
-        String value2 = "politician";
+        String field2 = "B";
+        String value2 = "Beta";
 
-        jedis.hset(key, field, value);
+        jedis.hset(key, field1, value1);
         jedis.hset(key, field2, value2);
 
-        String value3 = jedis.hget(key, field);
-        assertEquals(value, value3);
+        String actualValue1 = jedis.hget(key, field1);
+        assertEquals(value1, actualValue1);
 
         Map<String, String> fields = jedis.hgetAll(key);
-        String value4 = fields.get(field2);
-        assertEquals(value2, value4);
+        String actualValue2 = fields.get(field2);
+        assertEquals(value2, actualValue2);
     }
 
     @Test
-    public void givenARanking_thenSaveItInRedisSortedSet() {
+    public void testSortedSet() {
         String key = "ranking";
 
         Map<String, Double> scores = new HashMap<>();
