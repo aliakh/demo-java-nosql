@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertTrue;
 
-public class LettuceIntegrationTest extends RedisTest {
+public class LettuceIntegrationTest extends IntegrationTest {
 
     private static Logger log = LoggerFactory.getLogger(LettuceIntegrationTest.class);
 
@@ -44,7 +44,7 @@ public class LettuceIntegrationTest extends RedisTest {
 //        redisServer.start();
 
         // Docker defaults to mapping redis port to 32768
-        redisClient = RedisClient.create("redis://localhost:" + port + "/");
+        redisClient = RedisClient.create("redis://localhost:" + getRedisPort() + "/");
         redisConnection = redisClient.connect();
     }
 

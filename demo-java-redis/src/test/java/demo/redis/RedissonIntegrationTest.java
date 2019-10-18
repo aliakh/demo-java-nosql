@@ -34,7 +34,7 @@ import java.util.stream.StreamSupport;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class RedissonIntegrationTest extends RedisTest {
+public class RedissonIntegrationTest extends IntegrationTest {
 
     //    private static RedisServer redisServer;
     private static RedissonClient client;
@@ -50,7 +50,7 @@ public class RedissonIntegrationTest extends RedisTest {
 
         Config config = new Config();
         config.useSingleServer()
-                .setAddress("127.0.0.1:" + port);
+                .setAddress("127.0.0.1:" + getRedisPort());
 
         client = Redisson.create(config);
     }

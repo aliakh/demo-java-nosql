@@ -1,6 +1,8 @@
-package demo.redis;
+package demo.redis.jedis;
 
+import demo.redis.IntegrationTest;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,34 +19,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class JedisIntegrationTest extends RedisTest {
+public class JedisIntegrationTest extends IntegrationTest {
 
     private static Jedis jedis;
-//    private static RedisServer redisServer;
-//    private static int port;
 
     @BeforeClass
-    public static void setUp() throws IOException {
-
-//        // Take an available port
-//        ServerSocket s = new ServerSocket(0);
-//        port = s.getLocalPort();
-//        s.close();
-//
-//        redisServer = new RedisServer(port);
-//        redisServer.start();
-
-        // Configure JEDIS
-        jedis = new Jedis("localhost", port);
+    public static void beforeClass() throws IOException {
+        IntegrationTest.beforeClass();
+        jedis = new Jedis("localhost", getRedisPort());
     }
 
-//    @AfterClass
-//    public static void destroy() {
-//        redisServer.stop();
-//    }
+    @AfterClass
+    public static void afterClass() {
+        IntegrationTest.afterClass();
+    }
 
     @After
-    public void flush() {
+    public void afterMethod() {
         jedis.flushAll();
     }
 
@@ -191,7 +182,8 @@ public class JedisIntegrationTest extends RedisTest {
     public void givenAPoolConfiguration_thenCreateAJedisPool() {
         final JedisPoolConfig poolConfig = buildPoolConfig();
 
-        try (JedisPool jedisPool = new JedisPool(poolConfig, "localhost", port); Jedis jedis = jedisPool.getResource()) {
+        try (JedisPool jedisPool = new JedisPool(poolConfig, "localhost", getRedisPort());
+             Jedis jedis = jedisPool.getResource()) {
 
             // do simple operation to verify that the Jedis resource is working
             // properly
