@@ -69,7 +69,7 @@ public class BookRepositoryIntegrationTest {
     @Test
     public void whenSavingBook_thenAvailableOnRetrieval() {
         final Book javaBook = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
-        bookRepository.save(ImmutableSet.of(javaBook));
+        bookRepository.save(javaBook);
         final Iterable<Book> books = bookRepository.findByTitleAndPublisher("Head First Java", "O'Reilly Media");
         assertEquals(javaBook.getId(), books.iterator().next().getId());
     }
@@ -77,10 +77,10 @@ public class BookRepositoryIntegrationTest {
     @Test
     public void whenUpdatingBooks_thenAvailableOnRetrieval() {
         final Book javaBook = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
-        bookRepository.save(ImmutableSet.of(javaBook));
+        bookRepository.save(javaBook);
         final Iterable<Book> books = bookRepository.findByTitleAndPublisher("Head First Java", "O'Reilly Media");
         javaBook.setTitle("Head First Java Second Edition");
-        bookRepository.save(ImmutableSet.of(javaBook));
+        bookRepository.save(javaBook);
         final Iterable<Book> updateBooks = bookRepository.findByTitleAndPublisher("Head First Java Second Edition", "O'Reilly Media");
         assertEquals(javaBook.getTitle(), updateBooks.iterator().next().getTitle());
     }
@@ -88,7 +88,7 @@ public class BookRepositoryIntegrationTest {
     @Test(expected = java.util.NoSuchElementException.class)
     public void whenDeletingExistingBooks_thenNotAvailableOnRetrieval() {
         final Book javaBook = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
-        bookRepository.save(ImmutableSet.of(javaBook));
+        bookRepository.save(javaBook);
         bookRepository.delete(javaBook);
         final Iterable<Book> books = bookRepository.findByTitleAndPublisher("Head First Java", "O'Reilly Media");
         assertNotEquals(javaBook.getId(), books.iterator().next().getId());
@@ -98,8 +98,8 @@ public class BookRepositoryIntegrationTest {
     public void whenSavingBooks_thenAllShouldAvailableOnRetrieval() {
         final Book javaBook = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
         final Book dPatternBook = new Book(UUIDs.timeBased(), "Head Design Patterns", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
-        bookRepository.save(ImmutableSet.of(javaBook));
-        bookRepository.save(ImmutableSet.of(dPatternBook));
+        bookRepository.save(javaBook);
+        bookRepository.save(dPatternBook);
         final Iterable<Book> books = bookRepository.findAll();
         int bookCount = 0;
         for (final Book book : books) {
