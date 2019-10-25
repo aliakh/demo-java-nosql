@@ -24,8 +24,6 @@ import static org.junit.Assert.assertNotEquals;
 
 abstract public class AbstractIntegrationTest {
 
-    private static final Log LOGGER = LogFactory.getLog(AbstractIntegrationTest.class);
-
     private static final String CREATE_KEYSPACE = "CREATE KEYSPACE IF NOT EXISTS TestKeySpace WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '3' };";
     private static final String USE_KEYSPACE = "USE TestKeySpace;";
     protected static final String TABLE_NAME = "book";
@@ -35,17 +33,12 @@ abstract public class AbstractIntegrationTest {
 
     @BeforeClass
     public static void startEmbeddedCassandra() throws InterruptedException, TTransportException, ConfigurationException, IOException {
-        LOGGER.info("Start embedded Cassandra");
         EmbeddedCassandraServerHelper.startEmbeddedCassandra();
-        LOGGER.info("Connect co cluster");
         Cluster cluster = Cluster.builder().addContactPoints("127.0.0.1").withPort(9142).build();
         Session session = cluster.connect();
-        LOGGER.info("Prepare key space");
         session.execute(CREATE_KEYSPACE);
         session.execute(USE_KEYSPACE);
-        LOGGER.info("Waiting started");
         Thread.sleep(5000);
-        LOGGER.info("Waiting finished");
     }
 
     @AfterClass
