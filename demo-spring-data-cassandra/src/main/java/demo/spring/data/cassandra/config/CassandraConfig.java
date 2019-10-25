@@ -1,4 +1,4 @@
-package org.example.spring.data.cassandra.config;
+package demo.spring.data.cassandra.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,7 +15,7 @@ import org.springframework.data.cassandra.repository.config.EnableCassandraRepos
 
 @Configuration
 @PropertySource(value = { "classpath:cassandra.properties" })
-@EnableCassandraRepositories(basePackages = "org.example.spring.data.cassandra.repository")
+@EnableCassandraRepositories(basePackages = "demo.spring.data.cassandra.repository")
 public class CassandraConfig extends AbstractCassandraConfiguration {
     private static final Log LOGGER = LogFactory.getLog(CassandraConfig.class);
 

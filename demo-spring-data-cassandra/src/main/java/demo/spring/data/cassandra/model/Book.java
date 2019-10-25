@@ -1,4 +1,4 @@
-package org.example.spring.data.cassandra.model;
+package demo.spring.data.cassandra.model;
 
 import java.util.HashSet;
 import java.util.Set;
