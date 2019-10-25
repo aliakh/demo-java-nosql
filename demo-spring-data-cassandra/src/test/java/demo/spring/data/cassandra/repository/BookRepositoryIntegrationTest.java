@@ -4,15 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
-import java.util.HashMap;
 
+import demo.spring.data.cassandra.AbstractIntegrationTest;
 import org.apache.cassandra.exceptions.ConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.thrift.transport.TTransportException;
 import demo.spring.data.cassandra.config.CassandraConfig;
 import demo.spring.data.cassandra.model.Book;
-import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -20,13 +17,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cassandra.core.cql.CqlIdentifier;
-import org.springframework.data.cassandra.core.CassandraAdminOperations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.datastax.driver.core.Cluster;
-import com.datastax.driver.core.Session;
 import com.datastax.driver.core.utils.UUIDs;
 import com.google.common.collect.ImmutableSet;
 

@@ -1,4 +1,4 @@
-package demo.spring.data.cassandra.repository;
+package demo.spring.data.cassandra;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
@@ -13,8 +13,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cassandra.core.cql.CqlIdentifier;
 import org.springframework.data.cassandra.core.CassandraAdminOperations;
+import org.springframework.data.cassandra.core.cql.CqlIdentifier;
 
 import java.io.IOException;
 import java.util.HashMap;

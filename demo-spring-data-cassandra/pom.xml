@@ -26,12 +26,11 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-cassandra</artifactId>
-            <version>${org.springframework.data.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
+            <groupId>org.hectorclient</groupId>
+            <artifactId>hector-core</artifactId>
+            <version>${hector-core.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
@@ -39,6 +38,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>com.datastax.cassandra</groupId>
+            <artifactId>cassandra-driver-core</artifactId>
+            <version>${cassandra-driver-core.version}</version>
+            <optional>true</optional>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -62,23 +68,6 @@
             <artifactId>cassandra-unit-shaded</artifactId>
             <version>${cassandra-unit-shaded.version}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.hectorclient</groupId>
-            <artifactId>hector-core</artifactId>
-            <version>${hector-core.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.datastax.cassandra</groupId>
-            <artifactId>cassandra-driver-core</artifactId>
-            <version>${cassandra-driver-core.version}</version>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 
