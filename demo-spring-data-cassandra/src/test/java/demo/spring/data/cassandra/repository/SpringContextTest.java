@@ -1,12 +1,12 @@
-package org.example;
+package demo.spring.data.cassandra.repository;
 
 import java.io.IOException;
 import java.util.HashMap;
 
 import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.thrift.transport.TTransportException;
-import org.example.spring.data.cassandra.config.CassandraConfig;
-import org.example.spring.data.cassandra.model.Book;
+import demo.spring.data.cassandra.config.CassandraConfig;
+import demo.spring.data.cassandra.model.Book;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.After;
 import org.junit.AfterClass;

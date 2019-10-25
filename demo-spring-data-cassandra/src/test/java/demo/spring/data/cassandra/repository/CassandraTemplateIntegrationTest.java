@@ -1,4 +1,4 @@
-package org.example.spring.data.cassandra.repository;
+package demo.spring.data.cassandra.repository;
 
 import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.CoreMatchers.is;
@@ -14,8 +14,8 @@ import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.thrift.transport.TTransportException;
-import org.example.spring.data.cassandra.config.CassandraConfig;
-import org.example.spring.data.cassandra.model.Book;
+import demo.spring.data.cassandra.config.CassandraConfig;
+import demo.spring.data.cassandra.model.Book;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.After;
 import org.junit.AfterClass;
