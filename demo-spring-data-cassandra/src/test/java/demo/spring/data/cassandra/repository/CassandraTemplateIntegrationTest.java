@@ -41,7 +41,6 @@ import com.google.common.collect.ImmutableSet;
 @ContextConfiguration(classes = CassandraConfig.class)
 public class CassandraTemplateIntegrationTest extends AbstractIntegrationTest {
 
-
     @Autowired
     private CassandraOperations cassandraTemplate;
 
@@ -70,24 +69,24 @@ public class CassandraTemplateIntegrationTest extends AbstractIntegrationTest {
         Book book1 = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
         cassandraTemplate.insert(book1);
         Select select = QueryBuilder.select().from("book").where(QueryBuilder.eq("title", "Head First Java")).and(QueryBuilder.eq("publisher", "O'Reilly Media")).limit(10);
-        Book retrievedBook = cassandraTemplate.selectOne(select, Book.class);
-        assertEquals(book1.getId(), retrievedBook.getId());
+        Book actualBook = cassandraTemplate.selectOne(select, Book.class);
+        assertEquals(book1.getId(), actualBook.getId());
     }
 
     @Test
     public void whenSavingBooks_thenAllAvailableOnRetrieval() {
         Book book1 = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
         Book book2 = new Book(UUIDs.timeBased(), "Head Design Patterns", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
-        final List<Book> bookList = new ArrayList<>();
-        bookList.add(book1);
-        bookList.add(book2);
-        cassandraTemplate.insert(bookList);
+        List<Book> books = new ArrayList<>();
+        books.add(book1);
+        books.add(book2);
+        cassandraTemplate.insert(books);
 
         Select select = QueryBuilder.select().from("book").limit(10);
-        final List<Book> retrievedBooks = cassandraTemplate.select(select, Book.class);
-        assertThat(retrievedBooks.size(), is(2));
-        assertEquals(book1.getId(), retrievedBooks.get(0).getId());
-        assertEquals(book2.getId(), retrievedBooks.get(1).getId());
+         List<Book> actualBooks = cassandraTemplate.select(select, Book.class);
+        assertThat(actualBooks.size(), is(2));
+        assertEquals(book1.getId(), actualBooks.get(0).getId());
+        assertEquals(book2.getId(), actualBooks.get(1).getId());
     }
 
     @Test
@@ -95,11 +94,11 @@ public class CassandraTemplateIntegrationTest extends AbstractIntegrationTest {
         Book book1 = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
         cassandraTemplate.insert(book1);
         Select select = QueryBuilder.select().from("book").limit(10);
-        Book retrievedBook = cassandraTemplate.selectOne(select, Book.class);
-        retrievedBook.setTags(ImmutableSet.of("Java", "Programming"));
-        cassandraTemplate.update(retrievedBook);
+        Book actualBook = cassandraTemplate.selectOne(select, Book.class);
+        actualBook.setTags(ImmutableSet.of("Java", "Programming"));
+        cassandraTemplate.update(actualBook);
         Book retrievedUpdatedBook = cassandraTemplate.selectOne(select, Book.class);
-        assertEquals(retrievedBook.getTags(), retrievedUpdatedBook.getTags());
+        assertEquals(actualBook.getTags(), retrievedUpdatedBook.getTags());
     }
 
     @Test
@@ -108,8 +107,8 @@ public class CassandraTemplateIntegrationTest extends AbstractIntegrationTest {
         cassandraTemplate.insert(book1);
         cassandraTemplate.delete(book1);
         Select select = QueryBuilder.select().from("book").limit(10);
-        Book retrievedUpdatedBook = cassandraTemplate.selectOne(select, Book.class);
-        assertNull(retrievedUpdatedBook);
+        Book actualBook = cassandraTemplate.selectOne(select, Book.class);
+        assertNull(actualBook);
     }
 
     @Test
@@ -120,8 +119,8 @@ public class CassandraTemplateIntegrationTest extends AbstractIntegrationTest {
         cassandraTemplate.insert(book2);
         cassandraTemplate.deleteAll(Book.class);
         Select select = QueryBuilder.select().from("book").limit(10);
-        Book retrievedUpdatedBook = cassandraTemplate.selectOne(select, Book.class);
-        assertNull(retrievedUpdatedBook);
+        Book actualBook = cassandraTemplate.selectOne(select, Book.class);
+        assertNull(actualBook);
     }
 
     @Test
@@ -130,7 +129,7 @@ public class CassandraTemplateIntegrationTest extends AbstractIntegrationTest {
         Book book2 = new Book(UUIDs.timeBased(), "Head Design Patterns", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
         cassandraTemplate.insert(book1);
         cassandraTemplate.insert(book2);
-        final long bookCount = cassandraTemplate.count(Book.class);
-        assertEquals(2, bookCount);
+        long actualBooksCount = cassandraTemplate.count(Book.class);
+        assertEquals(2, actualBooksCount);
     }
 }

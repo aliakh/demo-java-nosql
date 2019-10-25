@@ -28,7 +28,7 @@ abstract public class AbstractIntegrationTest {
 
     private static final String CREATE_KEYSPACE = "CREATE KEYSPACE IF NOT EXISTS TestKeySpace WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '3' };";
     private static final String USE_KEYSPACE = "USE TestKeySpace;";
-    private static final String TABLE_NAME = "book";
+    protected static final String TABLE_NAME = "book";
 
     @Autowired
     private CassandraAdminOperations cassandraAdminOperations;

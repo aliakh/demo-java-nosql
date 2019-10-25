@@ -42,7 +42,6 @@ public class BookRepositoryIntegrationTest extends AbstractIntegrationTest {
         AbstractIntegrationTest.startEmbeddedCassandra();
     }
 
-
     @AfterClass
     public static void stopEmbeddedCassandra() {
         AbstractIntegrationTest.stopEmbeddedCassandra();
