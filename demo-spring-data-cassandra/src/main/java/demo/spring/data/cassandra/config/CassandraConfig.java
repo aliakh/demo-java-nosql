@@ -31,16 +31,18 @@ public class CassandraConfig extends AbstractCassandraConfiguration {
     @Override
     @Bean
     public CassandraClusterFactoryBean cluster() {
-        final CassandraClusterFactoryBean cluster = new CassandraClusterFactoryBean();
-        cluster.setContactPoints(environment.getProperty("cassandra.contactpoints"));
-        cluster.setPort(Integer.parseInt(environment.getProperty("cassandra.port")));
-        LOGGER.info("Cluster created with contact points [" + environment.getProperty("cassandra.contactpoints") + "] " + "& port [" + Integer.parseInt(environment.getProperty("cassandra.port")) + "].");
+        String contactPoints = environment.getProperty("cassandra.contact.points");
+        int port = Integer.parseInt(environment.getProperty("cassandra.port"));
+        LOGGER.info(String.format("Cassandra cluster: contactPoints=%s, port=%d", contactPoints, port));
+        CassandraClusterFactoryBean cluster = new CassandraClusterFactoryBean();
+        cluster.setContactPoints(contactPoints);
+        cluster.setPort(port);
         return cluster;
     }
 
     @Override
     @Bean
-    public CassandraMappingContext cassandraMapping() throws ClassNotFoundException {
+    public CassandraMappingContext cassandraMapping() {
         return new BasicCassandraMappingContext();
     }
 }

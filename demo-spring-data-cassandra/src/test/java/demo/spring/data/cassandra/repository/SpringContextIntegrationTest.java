@@ -27,9 +27,9 @@ import com.datastax.driver.core.Session;
 @ContextConfiguration(classes = CassandraConfig.class)
 public class SpringContextIntegrationTest {
 
-    public static final String KEYSPACE_CREATION_QUERY = "CREATE KEYSPACE IF NOT EXISTS testKeySpace " + "WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '3' };";
+    public static final String KEYSPACE_CREATION_QUERY = "CREATE KEYSPACE IF NOT EXISTS TestKeySpace " + "WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '3' };";
 
-    public static final String KEYSPACE_ACTIVATE_QUERY = "USE testKeySpace;";
+    public static final String KEYSPACE_ACTIVATE_QUERY = "USE TestKeySpace;";
 
     public static final String DATA_TABLE_NAME = "book";
 	
