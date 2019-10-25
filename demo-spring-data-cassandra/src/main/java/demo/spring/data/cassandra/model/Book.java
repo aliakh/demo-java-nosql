@@ -2,6 +2,7 @@ package demo.spring.data.cassandra.model;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.UUID;
 
 import org.springframework.cassandra.core.Ordering;
@@ -25,7 +26,7 @@ public class Book {
     @Column
     private Set<String> tags = new HashSet<>();
 
-    public Book(final UUID id, final String title, final String publisher, final Set<String> tags) {
+    public Book( UUID id,  String title,  String publisher,  Set<String> tags) {
         this.id = id;
         this.title = title;
         this.publisher = publisher;
@@ -36,32 +37,41 @@ public class Book {
         return id;
     }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getPublisher() {
         return publisher;
     }
 
-    public Set getTags() {
-        return tags;
-    }
-
-    public void setId(final UUID id) {
-        this.id = id;
-    }
-
-    public void setTitle(final String title) {
-        this.title = title;
-    }
-
-    public void setPublisher(final String publisher) {
+    public void setPublisher(String publisher) {
         this.publisher = publisher;
     }
 
-    public void setTags(final Set<String> tags) {
+    public Set<String> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<String> tags) {
         this.tags = tags;
     }
 
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Book.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("title='" + title + "'")
+                .add("publisher='" + publisher + "'")
+                .add("tags=" + tags)
+                .toString();
+    }
 }
