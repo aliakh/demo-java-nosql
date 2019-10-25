@@ -2,9 +2,6 @@ package demo.spring.data.cassandra.repository;
 
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
-import com.datastax.driver.core.utils.UUIDs;
-import com.google.common.collect.ImmutableSet;
-import demo.spring.data.cassandra.config.CassandraConfig;
 import demo.spring.data.cassandra.model.Book;
 import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.commons.logging.Log;
@@ -15,13 +12,9 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cassandra.core.cql.CqlIdentifier;
 import org.springframework.data.cassandra.core.CassandraAdminOperations;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -33,37 +26,40 @@ abstract public class AbstractIntegrationTest {
 
     private static final Log LOGGER = LogFactory.getLog(AbstractIntegrationTest.class);
 
-    private static final String KEYSPACE_CREATION_QUERY = "CREATE KEYSPACE IF NOT EXISTS TestKeySpace WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '3' };";
-    private static final String KEYSPACE_ACTIVATE_QUERY = "USE TestKeySpace;";
-    private static final String DATA_TABLE_NAME = "book";
+    private static final String CREATE_KEYSPACE = "CREATE KEYSPACE IF NOT EXISTS TestKeySpace WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '3' };";
+    private static final String USE_KEYSPACE = "USE TestKeySpace;";
+    private static final String TABLE_NAME = "book";
 
     @Autowired
-    private CassandraAdminOperations adminTemplate;
+    private CassandraAdminOperations cassandraAdminOperations;
 
     @BeforeClass
-    public static void startCassandraEmbedded() throws InterruptedException, TTransportException, ConfigurationException, IOException {
+    public static void startEmbeddedCassandra() throws InterruptedException, TTransportException, ConfigurationException, IOException {
+        LOGGER.info("Start embedded Cassandra");
         EmbeddedCassandraServerHelper.startEmbeddedCassandra();
-        final Cluster cluster = Cluster.builder().addContactPoints("127.0.0.1").withPort(9142).build();
-        LOGGER.info("Server Started at 127.0.0.1:9142... ");
-        final Session session = cluster.connect();
-        session.execute(KEYSPACE_CREATION_QUERY);
-        session.execute(KEYSPACE_ACTIVATE_QUERY);
-        LOGGER.info("KeySpace created and activated.");
+        LOGGER.info("Connect co cluster");
+        Cluster cluster = Cluster.builder().addContactPoints("127.0.0.1").withPort(9142).build();
+        Session session = cluster.connect();
+        LOGGER.info("Prepare key space");
+        session.execute(CREATE_KEYSPACE);
+        session.execute(USE_KEYSPACE);
+        LOGGER.info("Waiting started");
         Thread.sleep(5000);
+        LOGGER.info("Waiting finished");
     }
 
     @AfterClass
-    public static void stopCassandraEmbedded() {
+    public static void stopEmbeddedCassandra() {
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 
     @Before
-    public void createTable() throws InterruptedException, TTransportException, ConfigurationException, IOException {
-        adminTemplate.createTable(true, CqlIdentifier.cqlId(DATA_TABLE_NAME), Book.class, new HashMap<String, Object>());
+    public void createTable() {
+        cassandraAdminOperations.createTable(true, CqlIdentifier.cqlId(TABLE_NAME), Book.class, new HashMap<String, Object>());
     }
 
     @After
     public void dropTable() {
-        adminTemplate.dropTable(CqlIdentifier.cqlId(DATA_TABLE_NAME));
+        cassandraAdminOperations.dropTable(CqlIdentifier.cqlId(TABLE_NAME));
     }
 }

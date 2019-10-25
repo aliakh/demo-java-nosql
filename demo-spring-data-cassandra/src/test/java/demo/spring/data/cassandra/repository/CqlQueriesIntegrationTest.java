@@ -1,4 +1,4 @@
-package demo.spring.data.cassandra.repository.temp;
+package demo.spring.data.cassandra.repository;
 
 import static junit.framework.TestCase.assertEquals;
 
@@ -38,38 +38,29 @@ import com.google.common.collect.ImmutableSet;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = CassandraConfig.class)
-public class CqlQueriesIntegrationTest {
-    private static final Log LOGGER = LogFactory.getLog(CqlQueriesIntegrationTest.class);
-
-    public static final String KEYSPACE_CREATION_QUERY = "CREATE KEYSPACE IF NOT EXISTS TestKeySpace " + "WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '3' };";
-
-    public static final String KEYSPACE_ACTIVATE_QUERY = "USE TestKeySpace;";
-
-    public static final String DATA_TABLE_NAME = "book";
-
-    @Autowired
-    private CassandraAdminOperations adminTemplate;
+public class CqlQueriesIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private CassandraOperations cassandraTemplate;
 
-    //
-
     @BeforeClass
-    public static void startCassandraEmbedded() throws InterruptedException, TTransportException, ConfigurationException, IOException {
-        EmbeddedCassandraServerHelper.startEmbeddedCassandra(25000);
-        final Cluster cluster = Cluster.builder().addContactPoints("127.0.0.1").withPort(9142).build();
-        LOGGER.info("Server Started at 127.0.0.1:9142... ");
-        final Session session = cluster.connect();
-        session.execute(KEYSPACE_CREATION_QUERY);
-        session.execute(KEYSPACE_ACTIVATE_QUERY);
-        LOGGER.info("KeySpace created and activated.");
-        Thread.sleep(5000);
+    public static void startEmbeddedCassandra() throws InterruptedException, TTransportException, ConfigurationException, IOException {
+        AbstractIntegrationTest.startEmbeddedCassandra();
+    }
+
+    @AfterClass
+    public static void stopEmbeddedCassandra() {
+        AbstractIntegrationTest.stopEmbeddedCassandra();
     }
 
     @Before
-    public void createTable() throws InterruptedException, TTransportException, ConfigurationException, IOException {
-        adminTemplate.createTable(true, CqlIdentifier.cqlId(DATA_TABLE_NAME), Book.class, new HashMap<String, Object>());
+    public void createTable() {
+        super.createTable();
+    }
+
+    @After
+    public void dropTable() {
+        super.dropTable();
     }
 
     @Test
@@ -77,8 +68,8 @@ public class CqlQueriesIntegrationTest {
         final UUID uuid = UUIDs.timeBased();
         final Insert insert = QueryBuilder.insertInto(DATA_TABLE_NAME).value("id", uuid).value("title", "Head First Java").value("publisher", "OReilly Media").value("tags", ImmutableSet.of("Software"));
         cassandraTemplate.execute(insert);
-        final Select select = QueryBuilder.select().from("book").limit(10);
-        final Book retrievedBook = cassandraTemplate.selectOne(select, Book.class);
+        Select select = QueryBuilder.select().from("book").limit(10);
+        Book retrievedBook = cassandraTemplate.selectOne(select, Book.class);
         assertEquals(uuid, retrievedBook.getId());
     }
 
@@ -87,8 +78,8 @@ public class CqlQueriesIntegrationTest {
         final UUID uuid = UUIDs.timeBased();
         final String insertCql = "insert into book (id, title, publisher, tags) values " + "(" + uuid + ", 'Head First Java', 'OReilly Media', {'Software'})";
         cassandraTemplate.execute(insertCql);
-        final Select select = QueryBuilder.select().from("book").limit(10);
-        final Book retrievedBook = cassandraTemplate.selectOne(select, Book.class);
+        Select select = QueryBuilder.select().from("book").limit(10);
+        Book retrievedBook = cassandraTemplate.selectOne(select, Book.class);
         assertEquals(uuid, retrievedBook.getId());
     }
 
@@ -106,19 +97,8 @@ public class CqlQueriesIntegrationTest {
         cassandraTemplate.ingest(insertPreparedCql, bookList);
         // This may not be required, just added to avoid any transient issues
         Thread.sleep(5000);
-        final Select select = QueryBuilder.select().from("book");
-        final Book retrievedBook = cassandraTemplate.selectOne(select, Book.class);
+        Select select = QueryBuilder.select().from("book");
+        Book retrievedBook = cassandraTemplate.selectOne(select, Book.class);
         assertEquals(uuid, retrievedBook.getId());
     }
-
-    @After
-    public void dropTable() {
-        adminTemplate.dropTable(CqlIdentifier.cqlId(DATA_TABLE_NAME));
-    }
-
-    @AfterClass
-    public static void stopCassandraEmbedded() {
-        EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
-    }
-
 }
