@@ -1,4 +1,4 @@
-package demo.spring.data.cassandra.repository;
+package demo.spring.data.cassandra.repository.temp;
 
 import java.io.IOException;
 import java.util.HashMap;

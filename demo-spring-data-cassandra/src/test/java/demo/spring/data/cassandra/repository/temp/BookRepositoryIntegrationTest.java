@@ -1,4 +1,4 @@
-package demo.spring.data.cassandra.repository;
+package demo.spring.data.cassandra.repository.temp;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotEquals;
 import java.io.IOException;
 import java.util.HashMap;
 
+import demo.spring.data.cassandra.repository.BookRepository;
 import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
