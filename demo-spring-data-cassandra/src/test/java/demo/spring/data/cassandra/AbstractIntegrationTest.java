@@ -4,8 +4,6 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import demo.spring.data.cassandra.model.Book;
 import org.apache.cassandra.exceptions.ConfigurationException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.thrift.transport.TTransportException;
 import org.cassandraunit.utils.EmbeddedCassandraServerHelper;
 import org.junit.After;
@@ -13,8 +11,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cassandra.core.cql.CqlIdentifier;
 import org.springframework.data.cassandra.core.CassandraAdminOperations;
-import org.springframework.data.cassandra.core.cql.CqlIdentifier;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,12 +22,12 @@ import static org.junit.Assert.assertNotEquals;
 
 abstract public class AbstractIntegrationTest {
 
-    private static final String CREATE_KEYSPACE = "CREATE KEYSPACE IF NOT EXISTS TestKeySpace WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '3' };";
-    private static final String USE_KEYSPACE = "USE TestKeySpace;";
-    protected static final String TABLE_NAME = "book";
+    private static final String CREATE_KEYSPACE = "CREATE KEYSPACE IF NOT EXISTS BookKeySpace WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '3' };";
+    private static final String USE_KEYSPACE = "USE BookKeySpace;";
+    private static final String TABLE_NAME = "book";
 
     @Autowired
-    private CassandraAdminOperations cassandraAdminOperations;
+    private CassandraAdminOperations adminTemplate;
 
     @BeforeClass
     public static void startEmbeddedCassandra() throws InterruptedException, TTransportException, ConfigurationException, IOException {
@@ -48,11 +46,15 @@ abstract public class AbstractIntegrationTest {
 
     @Before
     public void createTable() {
-        cassandraAdminOperations.createTable(true, CqlIdentifier.cqlId(TABLE_NAME), Book.class, new HashMap<String, Object>());
+        adminTemplate.createTable(true, CqlIdentifier.cqlId(TABLE_NAME), Book.class, new HashMap<String, Object>());
     }
 
     @After
     public void dropTable() {
-        cassandraAdminOperations.dropTable(CqlIdentifier.cqlId(TABLE_NAME));
+        adminTemplate.dropTable(CqlIdentifier.cqlId(TABLE_NAME));
+    }
+
+    public static String getTableName() {
+        return TABLE_NAME;
     }
 }

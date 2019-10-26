@@ -38,23 +38,23 @@ public class CassandraOperationsIntegrationTest extends AbstractIntegrationTest 
     private CassandraOperations cassandraOperations;
 
     @BeforeClass
-    public static void startEmbeddedCassandra() throws InterruptedException, TTransportException, ConfigurationException, IOException {
-        AbstractIntegrationTest.startEmbeddedCassandra();
+    public static void beforeClass() throws Exception {
+        startEmbeddedCassandra();
     }
 
     @AfterClass
-    public static void stopEmbeddedCassandra() {
-        AbstractIntegrationTest.stopEmbeddedCassandra();
+    public static void afterClass() {
+        stopEmbeddedCassandra();
     }
 
     @Before
-    public void createTable() {
-        super.createTable();
+    public void beforeMethod() {
+        createTable();
     }
 
     @After
-    public void dropTable() {
-        super.dropTable();
+    public void afterMethod() {
+        dropTable();
     }
 
     @Test
@@ -76,7 +76,7 @@ public class CassandraOperationsIntegrationTest extends AbstractIntegrationTest 
         cassandraOperations.insert(books);
 
         Select select = QueryBuilder.select().from("book").limit(10);
-         List<Book> actualBooks = cassandraOperations.select(select, Book.class);
+        List<Book> actualBooks = cassandraOperations.select(select, Book.class);
         assertThat(actualBooks.size(), is(2));
         assertEquals(book1.getId(), actualBooks.get(0).getId());
         assertEquals(book2.getId(), actualBooks.get(1).getId());
@@ -110,7 +110,7 @@ public class CassandraOperationsIntegrationTest extends AbstractIntegrationTest 
         Book book2 = new Book(UUIDs.timeBased(), "Head Design Patterns", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
         cassandraOperations.insert(book1);
         cassandraOperations.insert(book2);
-        cassandraOperations.truncate(Book.class);
+        cassandraOperations.deleteAll(Book.class);
         Select select = QueryBuilder.select().from("book").limit(10);
         Book actualBook = cassandraOperations.selectOne(select, Book.class);
         assertNull(actualBook);

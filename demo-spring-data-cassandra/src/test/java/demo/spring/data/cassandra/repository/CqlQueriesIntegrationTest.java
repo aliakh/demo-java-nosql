@@ -38,29 +38,29 @@ public class CqlQueriesIntegrationTest extends AbstractIntegrationTest {
     private CassandraOperations cassandraOperations;
 
     @BeforeClass
-    public static void startEmbeddedCassandra() throws InterruptedException, TTransportException, ConfigurationException, IOException {
-        AbstractIntegrationTest.startEmbeddedCassandra();
+    public static void beforeClass() throws Exception {
+        startEmbeddedCassandra();
     }
 
     @AfterClass
-    public static void stopEmbeddedCassandra() {
-        AbstractIntegrationTest.stopEmbeddedCassandra();
+    public static void afterClass() {
+        stopEmbeddedCassandra();
     }
 
     @Before
-    public void createTable() {
-        super.createTable();
+    public void beforeMethod() {
+        createTable();
     }
 
     @After
-    public void dropTable() {
-        super.dropTable();
+    public void afterMethod() {
+        dropTable();
     }
 
     @Test
     public void whenSavingBook_thenAvailableOnRetrieval_usingQueryBuilder() {
         UUID uuid = UUIDs.timeBased();
-        Insert insert = QueryBuilder.insertInto(TABLE_NAME).value("id", uuid).value("title", "Head First Java").value("publisher", "OReilly Media").value("tags", ImmutableSet.of("Software"));
+        Insert insert = QueryBuilder.insertInto(getTableName()).value("id", uuid).value("title", "Head First Java").value("publisher", "OReilly Media").value("tags", ImmutableSet.of("Software"));
         cassandraOperations.execute(insert);
         Select select = QueryBuilder.select().from("book").limit(10);
         Book actualBook = cassandraOperations.selectOne(select, Book.class);

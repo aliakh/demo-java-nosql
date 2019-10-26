@@ -31,23 +31,23 @@ public class BookRepositoryIntegrationTest extends AbstractIntegrationTest {
     private BookRepository bookRepository;
 
     @BeforeClass
-    public static void startEmbeddedCassandra() throws InterruptedException, TTransportException, ConfigurationException, IOException {
-        AbstractIntegrationTest.startEmbeddedCassandra();
+    public static void beforeClass() throws Exception {
+        startEmbeddedCassandra();
     }
 
     @AfterClass
-    public static void stopEmbeddedCassandra() {
-        AbstractIntegrationTest.stopEmbeddedCassandra();
+    public static void afterClass() {
+        stopEmbeddedCassandra();
     }
 
     @Before
-    public void createTable() {
-        super.createTable();
+    public void beforeMethod() {
+        createTable();
     }
 
     @After
-    public void dropTable() {
-        super.dropTable();
+    public void afterMethod() {
+        dropTable();
     }
 
     @Test
