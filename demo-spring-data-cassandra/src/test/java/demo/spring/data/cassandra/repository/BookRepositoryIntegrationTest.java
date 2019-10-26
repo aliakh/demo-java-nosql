@@ -1,16 +1,12 @@
 package demo.spring.data.cassandra.repository;
 
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
+import static org.junit.Assert.*;
 
 import demo.spring.data.cassandra.AbstractIntegrationTest;
-import org.apache.cassandra.exceptions.ConfigurationException;
-import org.apache.thrift.transport.TTransportException;
 import demo.spring.data.cassandra.config.CassandraConfig;
 import demo.spring.data.cassandra.model.Book;
 import org.junit.After;
@@ -54,27 +50,27 @@ public class BookRepositoryIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testSaveAndFindBooks() {
-        Book book1 = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
-        Book book2 = new Book(UUIDs.timeBased(), "Head Design Patterns", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
+    public void repositoryStoresAndRetrievesBooks() {
+        Book book1 = new Book(UUIDs.timeBased(), TITLE1, PUBLISHER, ImmutableSet.of(TAG1, TAG2));
+        Book book2 = new Book(UUIDs.timeBased(), TITLE2, PUBLISHER, ImmutableSet.of(TAG1, TAG2));
         bookRepository.saveAll(ImmutableSet.of(book1, book2));
 
-        Iterable<Book> books = bookRepository.findByTitleAndPublisher("Head First Java", "O'Reilly Media");
+        Iterable<Book> books = bookRepository.findByTitleAndPublisher(TITLE1, PUBLISHER);
 
         assertThat(books, hasItem(book1));
-        assertThat(books, hasItem(book2));
+        assertThat(books, not(hasItem(book2)));
     }
 
     @Test
-    public void testSaveAndDeleteBooks() {
-        Book book1 = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
-        Book book2 = new Book(UUIDs.timeBased(), "Head Design Patterns", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
+    public void repositoryDeletesStoredBooks() {
+        Book book1 = new Book(UUIDs.timeBased(), TITLE1, PUBLISHER, ImmutableSet.of(TAG1, TAG2));
+        Book book2 = new Book(UUIDs.timeBased(), TITLE2, PUBLISHER, ImmutableSet.of(TAG1, TAG2));
         bookRepository.saveAll(ImmutableSet.of(book1, book2));
 
         bookRepository.delete(book1);
         bookRepository.delete(book2);
 
-        Iterable<Book> books = bookRepository.findByTitleAndPublisher("Head First Java", "O'Reilly Media");
+        Iterable<Book> books = bookRepository.findByTitleAndPublisher(TITLE1, PUBLISHER);
 
         assertThat(books, not(hasItem(book1)));
         assertThat(books, not(hasItem(book2)));

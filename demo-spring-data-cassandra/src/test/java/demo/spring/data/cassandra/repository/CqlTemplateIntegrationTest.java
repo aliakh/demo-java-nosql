@@ -2,6 +2,10 @@ package demo.spring.data.cassandra.repository;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -69,36 +73,36 @@ public class CqlTemplateIntegrationTest extends AbstractIntegrationTest {
         insertBookUsingStatementBuildWithQueryBuilder();
         insertBookUsingPreparedStatement();
 
-        ResultSet resultSet1 = cqlTemplate.query("select * from book where title='Head First Java' and publisher='OReilly Media'");
+        ResultSet resultSet1 = cqlTemplate.query("select * from book where title='" + TITLE1 + "' and publisher='" + PUBLISHER + "'");
 
         assertThat(resultSet1.all().size(), Is.is(2));
 
         Select select = QueryBuilder.select().from("book")
-                .where(QueryBuilder.eq("title", "Head First Java"))
-                .and(QueryBuilder.eq("publisher", "OReilly Media")).limit(10);
+                .where(QueryBuilder.eq("title", TITLE1))
+                .and(QueryBuilder.eq("publisher", PUBLISHER)).limit(10);
 
         ResultSet resultSet2 = cqlTemplate.query(select);
 
-        assertThat(resultSet2.all().size(), Is.is(1));
+        assertThat(resultSet2.all().size(), is(1));
     }
 
     private void insertBookUsingCqlString() {
         cqlTemplate.execute("insert into book (id, title, publisher, tags) " +
-                "values (" + UUIDs.timeBased() + ", 'Head First Java', '" + "OReilly Media" + "', {'Computer', 'Software'})");
+                "values (" + UUIDs.timeBased() + ", '" + TITLE1 + "', '" + PUBLISHER + "', {'" + TAG1 + "', '" + TAG1 + "'})");
     }
 
     private void insertBookUsingStatementBuildWithQueryBuilder() {
         Insert insertStatement = QueryBuilder.insertInto("book")
                 .value("id", UUIDs.timeBased())
-                .value("title", "Head First Java")
-                .value("publisher", "OReilly Media")
-                .value("tags", ImmutableSet.of("Computer", "Software"));
+                .value("title", TITLE1)
+                .value("publisher", PUBLISHER)
+                .value("tags", ImmutableSet.of(TAG1, TAG2));
         cqlTemplate.execute(insertStatement);
     }
 
     private void insertBookUsingPreparedStatement() {
         PreparedStatement preparedStatement = cqlTemplate.getSession().prepare("insert into book (id, title, publisher, tags) values (?, ?, ?, ?)");
-        Statement insertStatement = preparedStatement.bind(UUIDs.timeBased(), "Head First Java", "OReilly Media", ImmutableSet.of("Computer", "Software"));
+        Statement insertStatement = preparedStatement.bind(UUIDs.timeBased(), TITLE1, PUBLISHER, ImmutableSet.of(TAG1, TAG2));
         cqlTemplate.execute(insertStatement);
     }
 }

@@ -1,7 +1,7 @@
 package demo.spring.data.cassandra.repository;
 
 import static junit.framework.TestCase.assertNull;
-import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -61,15 +61,16 @@ public class CassandraTemplateIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     public void supportsPojoToCqlMappings() {
-        Book book = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
-        cassandraTemplate.insert(book);
+        Book book = new Book(UUIDs.timeBased(), TITLE1, PUBLISHER, ImmutableSet.of(TAG1, TAG2));
         cassandraTemplate.insert(book);
 
-        Select select = QueryBuilder.select().from(getTableName()).where(QueryBuilder.eq("title", "Head First Java")).and(QueryBuilder.eq("publisher", "O'Reilly Media")).limit(10);
+        Select select = QueryBuilder.select().from(getTableName())
+                .where(QueryBuilder.eq("title", TITLE1))
+                .and(QueryBuilder.eq("publisher", PUBLISHER)).limit(10);
 
         Book actualBook = cassandraTemplate.selectOne(select, Book.class);
 
-        assertThat(actualBook, IsEqual.equalTo(book));
+        assertThat(actualBook, equalTo(book));
 
         List<Book> actualBooks = cassandraTemplate.select(select, Book.class);
 

@@ -26,6 +26,7 @@
         <dependency>
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-cassandra</artifactId>
+            <version>${org.springframework.data.version}</version>
         </dependency>
         <dependency>
             <groupId>org.hectorclient</groupId>

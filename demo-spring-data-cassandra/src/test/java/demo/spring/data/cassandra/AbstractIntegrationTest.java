@@ -26,6 +26,12 @@ abstract public class AbstractIntegrationTest {
     private static final String USE_KEYSPACE = "USE BookKeySpace;";
     private static final String TABLE_NAME = "book";
 
+    public static final String TITLE1 = "Head First Java";
+    public static final String TITLE2 = "Head Design Patterns";
+    public static final String PUBLISHER = "O'Reilly Media";
+    public static final String TAG1 = "Software";
+    public static final String TAG2 = "Java";
+
     @Autowired
     private CassandraAdminOperations adminTemplate;
 
