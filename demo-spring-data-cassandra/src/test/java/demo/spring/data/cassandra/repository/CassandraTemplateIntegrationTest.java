@@ -1,18 +1,21 @@
 package demo.spring.data.cassandra.repository;
 
+import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.CoreMatchers.hasItem;
-import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import demo.spring.data.cassandra.AbstractIntegrationTest;
 import org.apache.cassandra.exceptions.ConfigurationException;
 import org.apache.thrift.transport.TTransportException;
 import demo.spring.data.cassandra.config.CassandraConfig;
 import demo.spring.data.cassandra.model.Book;
+import org.hamcrest.core.IsEqual;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -20,18 +23,21 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.datastax.driver.core.querybuilder.QueryBuilder;
+import com.datastax.driver.core.querybuilder.Select;
 import com.datastax.driver.core.utils.UUIDs;
 import com.google.common.collect.ImmutableSet;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = CassandraConfig.class)
-public class BookRepositoryIntegrationTest extends AbstractIntegrationTest {
+public class CassandraTemplateIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
-    private BookRepository bookRepository;
+    private CassandraOperations cassandraTemplate;
 
     @BeforeClass
     public static void beforeClass() throws Exception {
@@ -54,29 +60,20 @@ public class BookRepositoryIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
-    public void testSaveAndFindBooks() {
-        Book book1 = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
-        Book book2 = new Book(UUIDs.timeBased(), "Head Design Patterns", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
-        bookRepository.saveAll(ImmutableSet.of(book1, book2));
+    public void supportsPojoToCqlMappings() {
+        Book book = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
+        cassandraTemplate.insert(book);
+        cassandraTemplate.insert(book);
 
-        Iterable<Book> books = bookRepository.findByTitleAndPublisher("Head First Java", "O'Reilly Media");
+        Select select = QueryBuilder.select().from(getTableName()).where(QueryBuilder.eq("title", "Head First Java")).and(QueryBuilder.eq("publisher", "O'Reilly Media")).limit(10);
 
-        assertThat(books, hasItem(book1));
-        assertThat(books, hasItem(book2));
-    }
+        Book actualBook = cassandraTemplate.selectOne(select, Book.class);
 
-    @Test
-    public void testSaveAndDeleteBooks() {
-        Book book1 = new Book(UUIDs.timeBased(), "Head First Java", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
-        Book book2 = new Book(UUIDs.timeBased(), "Head Design Patterns", "O'Reilly Media", ImmutableSet.of("Computer", "Software"));
-        bookRepository.saveAll(ImmutableSet.of(book1, book2));
+        assertThat(actualBook, IsEqual.equalTo(book));
 
-        bookRepository.delete(book1);
-        bookRepository.delete(book2);
+        List<Book> actualBooks = cassandraTemplate.select(select, Book.class);
 
-        Iterable<Book> books = bookRepository.findByTitleAndPublisher("Head First Java", "O'Reilly Media");
-
-        assertThat(books, not(hasItem(book1)));
-        assertThat(books, not(hasItem(book2)));
+        assertThat(actualBooks.size(), is(1));
+        assertThat(actualBooks, hasItem(book));
     }
 }
