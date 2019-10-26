@@ -1,21 +1,13 @@
 package demo.spring.data.cassandra.repository;
 
-import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.CoreMatchers.*;
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import demo.spring.data.cassandra.AbstractIntegrationTest;
-import org.apache.cassandra.exceptions.ConfigurationException;
-import org.apache.thrift.transport.TTransportException;
 import demo.spring.data.cassandra.config.CassandraConfig;
 import demo.spring.data.cassandra.model.Book;
-import org.hamcrest.core.IsEqual;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -66,7 +58,8 @@ public class CassandraTemplateIntegrationTest extends AbstractIntegrationTest {
 
         Select select = QueryBuilder.select().from(getTableName())
                 .where(QueryBuilder.eq("title", TITLE1))
-                .and(QueryBuilder.eq("publisher", PUBLISHER)).limit(10);
+                .and(QueryBuilder.eq("publisher", PUBLISHER))
+                .limit(10);
 
         Book actualBook = cassandraTemplate.selectOne(select, Book.class);
 

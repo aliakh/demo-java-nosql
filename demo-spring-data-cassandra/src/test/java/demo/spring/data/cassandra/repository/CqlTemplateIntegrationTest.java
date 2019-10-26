@@ -1,26 +1,13 @@
 package demo.spring.data.cassandra.repository;
 
-import static junit.framework.TestCase.assertEquals;
-import static org.junit.Assert.assertThat;
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Statement;
 import demo.spring.data.cassandra.AbstractIntegrationTest;
-import org.apache.cassandra.exceptions.ConfigurationException;
-import org.apache.thrift.transport.TTransportException;
 import demo.spring.data.cassandra.config.CassandraConfig;
-import demo.spring.data.cassandra.model.Book;
-import org.hamcrest.core.Is;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -29,8 +16,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cassandra.core.CqlOperations;
-import org.springframework.cassandra.core.cql.CqlIdentifier;
-import org.springframework.data.cassandra.core.CassandraOperations;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -74,15 +59,14 @@ public class CqlTemplateIntegrationTest extends AbstractIntegrationTest {
         insertBookUsingPreparedStatement();
 
         ResultSet resultSet1 = cqlTemplate.query("select * from book where title='" + TITLE1 + "' and publisher='" + PUBLISHER + "'");
-
-        assertThat(resultSet1.all().size(), Is.is(2));
+        assertThat(resultSet1.all().size(), is(2));
 
         Select select = QueryBuilder.select().from("book")
                 .where(QueryBuilder.eq("title", TITLE1))
-                .and(QueryBuilder.eq("publisher", PUBLISHER)).limit(10);
+                .and(QueryBuilder.eq("publisher", PUBLISHER))
+                .limit(10);
 
         ResultSet resultSet2 = cqlTemplate.query(select);
-
         assertThat(resultSet2.all().size(), is(1));
     }
 

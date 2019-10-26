@@ -17,26 +17,23 @@ import org.springframework.data.cassandra.core.CassandraAdminOperations;
 import java.io.IOException;
 import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-
 abstract public class AbstractIntegrationTest {
 
     private static final String CREATE_KEYSPACE = "CREATE KEYSPACE IF NOT EXISTS BookKeySpace WITH replication = { 'class': 'SimpleStrategy', 'replication_factor': '3' };";
     private static final String USE_KEYSPACE = "USE BookKeySpace;";
     private static final String TABLE_NAME = "book";
 
-    public static final String TITLE1 = "Head First Java";
-    public static final String TITLE2 = "Head Design Patterns";
-    public static final String PUBLISHER = "O'Reilly Media";
-    public static final String TAG1 = "Software";
-    public static final String TAG2 = "Java";
+    protected static final String TITLE1 = "Learning Java";
+    protected static final String TITLE2 = "Java in a Nutshell";
+    protected static final String PUBLISHER = "O'Reilly Media";
+    protected static final String TAG1 = "Software";
+    protected static final String TAG2 = "Java";
 
     @Autowired
     private CassandraAdminOperations adminTemplate;
 
     @BeforeClass
-    public static void startEmbeddedCassandra() throws InterruptedException, TTransportException, ConfigurationException, IOException {
+    protected static void startEmbeddedCassandra() throws InterruptedException, TTransportException, ConfigurationException, IOException {
         EmbeddedCassandraServerHelper.startEmbeddedCassandra();
         Cluster cluster = Cluster.builder().addContactPoints("127.0.0.1").withPort(9142).build();
         Session session = cluster.connect();
@@ -46,21 +43,21 @@ abstract public class AbstractIntegrationTest {
     }
 
     @AfterClass
-    public static void stopEmbeddedCassandra() {
+    protected static void stopEmbeddedCassandra() {
         EmbeddedCassandraServerHelper.cleanEmbeddedCassandra();
     }
 
     @Before
-    public void createTable() {
+    protected void createTable() {
         adminTemplate.createTable(true, CqlIdentifier.cqlId(TABLE_NAME), Book.class, new HashMap<String, Object>());
     }
 
     @After
-    public void dropTable() {
+    protected void dropTable() {
         adminTemplate.dropTable(CqlIdentifier.cqlId(TABLE_NAME));
     }
 
-    public static String getTableName() {
+    protected static String getTableName() {
         return TABLE_NAME;
     }
 }

@@ -1,9 +1,6 @@
 package demo.spring.data.cassandra.repository;
 
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.*;
 
 import demo.spring.data.cassandra.AbstractIntegrationTest;
@@ -55,10 +52,10 @@ public class BookRepositoryIntegrationTest extends AbstractIntegrationTest {
         Book book2 = new Book(UUIDs.timeBased(), TITLE2, PUBLISHER, ImmutableSet.of(TAG1, TAG2));
         bookRepository.saveAll(ImmutableSet.of(book1, book2));
 
-        Iterable<Book> books = bookRepository.findByTitleAndPublisher(TITLE1, PUBLISHER);
+        Iterable<Book> actualBooks = bookRepository.findByTitleAndPublisher(TITLE1, PUBLISHER);
 
-        assertThat(books, hasItem(book1));
-        assertThat(books, not(hasItem(book2)));
+        assertThat(actualBooks, hasItem(book1));
+        assertThat(actualBooks, not(hasItem(book2)));
     }
 
     @Test
@@ -70,9 +67,9 @@ public class BookRepositoryIntegrationTest extends AbstractIntegrationTest {
         bookRepository.delete(book1);
         bookRepository.delete(book2);
 
-        Iterable<Book> books = bookRepository.findByTitleAndPublisher(TITLE1, PUBLISHER);
+        Iterable<Book> actualBooks = bookRepository.findByTitleAndPublisher(TITLE1, PUBLISHER);
 
-        assertThat(books, not(hasItem(book1)));
-        assertThat(books, not(hasItem(book2)));
+        assertThat(actualBooks, not(hasItem(book1)));
+        assertThat(actualBooks, not(hasItem(book2)));
     }
 }
