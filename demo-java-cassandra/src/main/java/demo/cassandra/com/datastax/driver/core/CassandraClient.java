@@ -1,19 +1,18 @@
 package demo.cassandra.com.datastax.driver.core;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import com.datastax.driver.core.Session;
+import com.datastax.driver.core.utils.UUIDs;
 import demo.cassandra.com.datastax.driver.core.domain.Book;
 import demo.cassandra.com.datastax.driver.core.repository.BookRepository;
 import demo.cassandra.com.datastax.driver.core.repository.KeyspaceRepository;
-import com.datastax.driver.core.Session;
-import com.datastax.driver.core.utils.UUIDs;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CassandraClient {
 
     private static final Logger LOG = LoggerFactory.getLogger(CassandraClient.class);
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 
         CassandraConnector connector = new CassandraConnector();
         connector.connect("127.0.0.1", null);

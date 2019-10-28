@@ -81,7 +81,7 @@ public class VideoRepository {
         ResultSet resultSet = executeStatement(select.build(), keyspace);
 
         List<Video> videos = new ArrayList<>();
-        for (Row row: resultSet) {
+        for (Row row : resultSet) {
             videos.add(new Video(row.getUuid("video_id"), row.getString("title"), row.getInstant("creation_date")));
         }
         return videos;

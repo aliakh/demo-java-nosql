@@ -49,7 +49,7 @@ public class BookRepository {
     public Book selectByTitle(String title) {
         ResultSet rs = session.execute("SELECT * FROM booksByTitle WHERE title = '" + title + "';");
 
-        List<Book> books = new ArrayList<Book>();
+        List<Book> books = new ArrayList<>();
         for (Row row : rs) {
             Book s = new Book(row.getUUID("id"), row.getString("title"), null, null);
             books.add(s);
@@ -61,7 +61,7 @@ public class BookRepository {
     public List<Book> selectAll() {
         ResultSet rs = session.execute("SELECT * FROM books");
 
-        List<Book> books = new ArrayList<Book>();
+        List<Book> books = new ArrayList<>();
         for (Row row : rs) {
             Book book = new Book(row.getUUID("id"), row.getString("title"), row.getString("author"), row.getString("subject"));
             books.add(book);
@@ -72,7 +72,7 @@ public class BookRepository {
     public List<Book> selectAllBookByTitle() {
         ResultSet rs = session.execute("SELECT * FROM booksByTitle");
 
-        List<Book> books = new ArrayList<Book>();
+        List<Book> books = new ArrayList<>();
         for (Row row : rs) {
             Book book = new Book(row.getUUID("id"), row.getString("title"), null, null);
             books.add(book);
