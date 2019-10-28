@@ -18,9 +18,9 @@ public class CassandraClient {
         connector.connect("127.0.0.1", null);
         Session session = connector.getSession();
 
-        KeyspaceRepository sr = new KeyspaceRepository(session);
-        sr.createKeyspace("library", "SimpleStrategy", 1);
-        sr.useKeyspace("library");
+        KeyspaceRepository keyspaceRepository = new KeyspaceRepository(session);
+        keyspaceRepository.createKeyspace("library", "SimpleStrategy", 1);
+        keyspaceRepository.useKeyspace("library");
 
         BookRepository bookRepository = new BookRepository(session);
         bookRepository.createTable();
@@ -38,7 +38,7 @@ public class CassandraClient {
         bookRepository.deleteTable("books");
         bookRepository.deleteTable("booksByTitle");
 
-        sr.deleteKeyspace("library");
+        keyspaceRepository.deleteKeyspace("library");
 
         connector.close();
     }
