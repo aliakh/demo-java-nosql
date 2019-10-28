@@ -1,4 +1,4 @@
-package com.example.cassandra.java.client.repository;
+package demo.cassandra.com.datastax.driver.core.repository;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -18,7 +18,7 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import com.example.cassandra.java.client.CassandraConnector;
+import demo.cassandra.com.datastax.driver.core.CassandraConnector;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 

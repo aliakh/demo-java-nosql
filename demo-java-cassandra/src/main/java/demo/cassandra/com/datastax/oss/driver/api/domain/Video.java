@@ -1,6 +1,7 @@
-package com.example.datastax.cassandra.domain;
+package demo.cassandra.com.datastax.oss.driver.api.domain;
 
 import java.time.Instant;
+import java.util.StringJoiner;
 import java.util.UUID;
 
 public class Video {
@@ -8,6 +9,9 @@ public class Video {
     private UUID id;
     private String title;
     private Instant creationDate;
+
+    public Video() {
+    }
 
     public Video(UUID id, String title, Instant creationDate) {
         this.id = id;
@@ -46,6 +50,10 @@ public class Video {
 
     @Override
     public String toString() {
-        return "[id:" + id.toString() + ", title:" + title + ", creationDate: " + creationDate.toString() + "]";
+        return new StringJoiner(", ", Video.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("title='" + title + "'")
+                .add("creationDate=" + creationDate)
+                .toString();
     }
 }

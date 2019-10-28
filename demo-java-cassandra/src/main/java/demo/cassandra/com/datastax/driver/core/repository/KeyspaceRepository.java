@@ -10,8 +10,8 @@ public class KeyspaceRepository {
         this.session = session;
     }
 
-    public void createKeyspace(String keyspaceName, String replicatioonStrategy, int numberOfReplicas) {
-        session.execute("CREATE KEYSPACE IF NOT EXISTS " + keyspaceName + " WITH replication = {" + "'class':'" + replicatioonStrategy + "','replication_factor':" + numberOfReplicas + "};");
+    public void createKeyspace(String keyspaceName, String replicationStrategy, int numberOfReplicas) {
+        session.execute("CREATE KEYSPACE IF NOT EXISTS " + keyspaceName + " WITH replication = {'class':'" + replicationStrategy + "','replication_factor':" + numberOfReplicas + "};");
     }
 
     public void useKeyspace(String keyspace) {

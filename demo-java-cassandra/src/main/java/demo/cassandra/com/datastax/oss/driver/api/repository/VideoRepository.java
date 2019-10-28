@@ -1,6 +1,6 @@
-package com.example.datastax.cassandra.repository;
+package demo.cassandra.com.datastax.oss.driver.api.repository;
 
-import com.example.datastax.cassandra.domain.Video;
+import demo.cassandra.com.datastax.oss.driver.api.domain.Video;
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.BoundStatement;

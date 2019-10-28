@@ -1,4 +1,4 @@
-package com.example.datastax.cassandra;
+package demo.cassandra.com.datastax.oss.driver.api;
 
 import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.CqlSessionBuilder;

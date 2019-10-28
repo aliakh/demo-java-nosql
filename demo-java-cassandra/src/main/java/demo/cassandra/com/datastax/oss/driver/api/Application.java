@@ -1,9 +1,9 @@
-package com.example.datastax.cassandra;
+package demo.cassandra.com.datastax.oss.driver.api;
 
-import com.example.datastax.cassandra.domain.Video;
-import com.example.datastax.cassandra.repository.KeyspaceRepository;
-import com.example.datastax.cassandra.repository.VideoRepository;
+import demo.cassandra.com.datastax.oss.driver.api.domain.Video;
 import com.datastax.oss.driver.api.core.CqlSession;
+import demo.cassandra.com.datastax.oss.driver.api.repository.KeyspaceRepository;
+import demo.cassandra.com.datastax.oss.driver.api.repository.VideoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

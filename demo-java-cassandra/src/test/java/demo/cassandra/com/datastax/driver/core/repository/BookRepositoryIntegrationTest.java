@@ -1,4 +1,4 @@
-package com.example.cassandra.java.client.repository;
+package demo.cassandra.com.datastax.driver.core.repository;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -16,8 +16,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.example.cassandra.java.client.CassandraConnector;
-import com.example.cassandra.java.client.domain.Book;
+import demo.cassandra.com.datastax.driver.core.CassandraConnector;
+import demo.cassandra.com.datastax.driver.core.domain.Book;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Session;
 import com.datastax.driver.core.exceptions.InvalidQueryException;
@@ -89,7 +89,7 @@ public class BookRepositoryIntegrationTest {
         String title = "Effective Java";
         String author = "Joshua Bloch";
         Book book = new Book(UUIDs.timeBased(), title, author, "Programming");
-        bookRepository.insertbookByTitle(book);
+        bookRepository.insertBookByTitle(book);
 
         Book savedBook = bookRepository.selectByTitle(title);
         assertEquals(book.getTitle(), savedBook.getTitle());
@@ -145,10 +145,10 @@ public class BookRepositoryIntegrationTest {
         bookRepository.createTableBooksByTitle();
 
         Book book = new Book(UUIDs.timeBased(), "Effective Java", "Joshua Bloch", "Programming");
-        bookRepository.insertbookByTitle(book);
+        bookRepository.insertBookByTitle(book);
 
         book = new Book(UUIDs.timeBased(), "Clean Code", "Robert C. Martin", "Programming");
-        bookRepository.insertbookByTitle(book);
+        bookRepository.insertBookByTitle(book);
 
         bookRepository.deletebookByTitle("Clean Code");
 
