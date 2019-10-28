@@ -10,70 +10,43 @@ import com.datastax.driver.core.Session;
 
 public class BookRepository {
 
-    private static final String TABLE_NAME = "books";
-
-    private static final String TABLE_NAME_BY_TITLE = TABLE_NAME + "ByTitle";
-
-    private Session session;
+    private final Session session;
 
     public BookRepository(Session session) {
         this.session = session;
     }
 
     public void createTable() {
-        StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS ").append(TABLE_NAME).append("(").append("id uuid PRIMARY KEY, ").append("title text,").append("author text,").append("subject text);");
-
-        final String query = sb.toString();
-        session.execute(query);
+        session.execute("CREATE TABLE IF NOT EXISTS " + "books" + "(" + "id uuid PRIMARY KEY, " + "title text," + "author text," + "subject text);");
     }
 
     public void createTableBooksByTitle() {
-        StringBuilder sb = new StringBuilder("CREATE TABLE IF NOT EXISTS ").append(TABLE_NAME_BY_TITLE).append("(").append("id uuid, ").append("title text,").append("PRIMARY KEY (title, id));");
-
-        final String query = sb.toString();
-        session.execute(query);
+        session.execute("CREATE TABLE IF NOT EXISTS " + "books" + "ByTitle" + "(" + "id uuid, " + "title text," + "PRIMARY KEY (title, id));");
     }
 
     public void alterTablebooks(String columnName, String columnType) {
-        StringBuilder sb = new StringBuilder("ALTER TABLE ").append(TABLE_NAME).append(" ADD ").append(columnName).append(" ").append(columnType).append(";");
-
-        final String query = sb.toString();
-        session.execute(query);
+        session.execute("ALTER TABLE " + "books" + " ADD " + columnName + " " + columnType + ";");
     }
 
-    public void insertbook(Book book) {
-        StringBuilder sb = new StringBuilder("INSERT INTO ").append(TABLE_NAME).append("(id, title, author, subject) ").append("VALUES (").append(book.getId()).append(", '").append(book.getTitle()).append("', '").append(book.getAuthor()).append("', '")
-                .append(book.getSubject()).append("');");
-
-        final String query = sb.toString();
-        session.execute(query);
+    public void insertBook(Book book) {
+        session.execute("INSERT INTO " + "books" + "(id, title, author, subject) " + "VALUES (" + book.getId() + ", '" + book.getTitle() + "', '" + book.getAuthor() + "', '" + book.getSubject() + "');");
     }
 
-    public void insertbookByTitle(Book book) {
-        StringBuilder sb = new StringBuilder("INSERT INTO ").append(TABLE_NAME_BY_TITLE).append("(id, title) ").append("VALUES (").append(book.getId()).append(", '").append(book.getTitle()).append("');");
-
-        final String query = sb.toString();
-        session.execute(query);
+    public void insertBookByTitle(Book book) {
+        session.execute("INSERT INTO " + "books" + "ByTitle" + "(id, title) " + "VALUES (" + book.getId() + ", '" + book.getTitle() + "');");
     }
 
     public void insertBookBatch(Book book) {
-        StringBuilder sb = new StringBuilder("BEGIN BATCH ").append("INSERT INTO ").append(TABLE_NAME).append("(id, title, author, subject) ").append("VALUES (").append(book.getId()).append(", '").append(book.getTitle()).append("', '").append(book.getAuthor())
-                .append("', '").append(book.getSubject()).append("');").append("INSERT INTO ").append(TABLE_NAME_BY_TITLE).append("(id, title) ").append("VALUES (").append(book.getId()).append(", '").append(book.getTitle()).append("');")
-                .append("APPLY BATCH;");
-
-        final String query = sb.toString();
-        session.execute(query);
+        String sb = "BEGIN BATCH " + "INSERT INTO " + "books" + "(id, title, author, subject) " + "VALUES (" + book.getId() + ", '" + book.getTitle() + "', '" + book.getAuthor() +
+                "', '" + book.getSubject() + "');" + "INSERT INTO " + "books" + "ByTitle" + "(id, title) " + "VALUES (" + book.getId() + ", '" + book.getTitle() + "');" +
+                "APPLY BATCH;";
+        session.execute(sb);
     }
 
     public Book selectByTitle(String title) {
-        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_NAME_BY_TITLE).append(" WHERE title = '").append(title).append("';");
-
-        final String query = sb.toString();
-
-        ResultSet rs = session.execute(query);
+        ResultSet rs = session.execute("SELECT * FROM " + "books" + "ByTitle" + " WHERE title = '" + title + "';");
 
         List<Book> books = new ArrayList<Book>();
-
         for (Row r : rs) {
             Book s = new Book(r.getUUID("id"), r.getString("title"), null, null);
             books.add(s);
@@ -83,13 +56,9 @@ public class BookRepository {
     }
 
     public List<Book> selectAll() {
-        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_NAME);
-
-        final String query = sb.toString();
-        ResultSet rs = session.execute(query);
+        ResultSet rs = session.execute("SELECT * FROM " + "books");
 
         List<Book> books = new ArrayList<Book>();
-
         for (Row r : rs) {
             Book book = new Book(r.getUUID("id"), r.getString("title"), r.getString("author"), r.getString("subject"));
             books.add(book);
@@ -98,13 +67,9 @@ public class BookRepository {
     }
 
     public List<Book> selectAllBookByTitle() {
-        StringBuilder sb = new StringBuilder("SELECT * FROM ").append(TABLE_NAME_BY_TITLE);
-
-        final String query = sb.toString();
-        ResultSet rs = session.execute(query);
+        ResultSet rs = session.execute("SELECT * FROM " + "books" + "ByTitle");
 
         List<Book> books = new ArrayList<Book>();
-
         for (Row r : rs) {
             Book book = new Book(r.getUUID("id"), r.getString("title"), null, null);
             books.add(book);
@@ -112,17 +77,11 @@ public class BookRepository {
         return books;
     }
 
-    public void deletebookByTitle(String title) {
-        StringBuilder sb = new StringBuilder("DELETE FROM ").append(TABLE_NAME_BY_TITLE).append(" WHERE title = '").append(title).append("';");
-
-        final String query = sb.toString();
-        session.execute(query);
+    public void deleteBookByTitle(String title) {
+        session.execute("DELETE FROM " + "books" + "ByTitle" + " WHERE title = '" + title + "';");
     }
 
     public void deleteTable(String tableName) {
-        StringBuilder sb = new StringBuilder("DROP TABLE IF EXISTS ").append(tableName);
-
-        final String query = sb.toString();
-        session.execute(query);
+        session.execute("DROP TABLE IF EXISTS " + tableName);
     }
 }
