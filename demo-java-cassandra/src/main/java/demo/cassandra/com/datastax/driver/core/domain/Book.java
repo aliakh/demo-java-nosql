@@ -1,17 +1,14 @@
-package com.example.cassandra.java.client.domain;
+package demo.cassandra.com.datastax.driver.core.domain;
 
+import java.util.StringJoiner;
 import java.util.UUID;
 
 public class Book {
 
     private UUID id;
-
     private String title;
-
     private String author;
-
     private String subject;
-
     private String publisher;
 
     Book() {
@@ -62,5 +59,16 @@ public class Book {
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Book.class.getSimpleName() + "[", "]")
+                .add("id=" + id)
+                .add("title='" + title + "'")
+                .add("author='" + author + "'")
+                .add("subject='" + subject + "'")
+                .add("publisher='" + publisher + "'")
+                .toString();
     }
 }
