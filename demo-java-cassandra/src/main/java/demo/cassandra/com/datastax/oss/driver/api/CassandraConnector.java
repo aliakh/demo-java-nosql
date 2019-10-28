@@ -9,7 +9,7 @@ public class CassandraConnector {
 
     private CqlSession session;
 
-    public void connect(final String node, final Integer port, final String dataCenter) {
+    public void connect( String node,  Integer port,  String dataCenter) {
         CqlSessionBuilder builder = CqlSession.builder();
         builder.addContactPoint(new InetSocketAddress(node, port));
         builder.withLocalDatacenter(dataCenter);

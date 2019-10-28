@@ -1,7 +1,7 @@
 package demo.cassandra.com.datastax.oss.driver.api;
 
-import demo.cassandra.com.datastax.oss.driver.api.domain.Video;
 import com.datastax.oss.driver.api.core.CqlSession;
+import demo.cassandra.com.datastax.oss.driver.api.domain.Video;
 import demo.cassandra.com.datastax.oss.driver.api.repository.KeyspaceRepository;
 import demo.cassandra.com.datastax.oss.driver.api.repository.VideoRepository;
 import org.slf4j.Logger;
@@ -11,15 +11,11 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 
-public class Application {
+public class CassandraClient {
 
-    private static final Logger LOG = LoggerFactory.getLogger(Application.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CassandraClient.class);
 
     public static void main(String[] args) {
-        new Application().run();
-    }
-
-    public void run() {
         CassandraConnector connector = new CassandraConnector();
         connector.connect("127.0.0.1", 9042, "datacenter1");
         CqlSession session = connector.getSession();
@@ -34,12 +30,11 @@ public class Application {
         videoRepository.createTable();
 
         videoRepository.insertVideo(new Video("Video Title 1", Instant.now()));
-        videoRepository.insertVideo(new Video("Video Title 2",
-            Instant.now().minus(1, ChronoUnit.DAYS)));
+        videoRepository.insertVideo(new Video("Video Title 2", Instant.now().minus(1, ChronoUnit.DAYS)));
 
         List<Video> videos = videoRepository.selectAll();
 
-        videos.forEach(x -> LOG.info(x.toString()));
+        videos.forEach(video -> LOG.info(video.toString()));
 
         connector.close();
     }

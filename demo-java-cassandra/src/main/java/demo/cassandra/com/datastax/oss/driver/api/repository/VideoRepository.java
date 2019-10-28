@@ -5,6 +5,7 @@ import com.datastax.oss.driver.api.core.CqlSession;
 import com.datastax.oss.driver.api.core.cql.BoundStatement;
 import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.ResultSet;
+import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.core.type.DataTypes;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
@@ -77,16 +78,13 @@ public class VideoRepository {
 
     public List<Video> selectAll(String keyspace) {
         Select select = QueryBuilder.selectFrom("videos").all();
-
         ResultSet resultSet = executeStatement(select.build(), keyspace);
 
-        List<Video> result = new ArrayList<>();
-
-        resultSet.forEach(x -> result.add(
-                new Video(x.getUuid("video_id"), x.getString("title"), x.getInstant("creation_date"))
-        ));
-
-        return result;
+        List<Video> videos = new ArrayList<>();
+        for (Row row: resultSet) {
+            videos.add(new Video(row.getUuid("video_id"), row.getString("title"), row.getInstant("creation_date")));
+        }
+        return videos;
     }
 
     private ResultSet executeStatement(SimpleStatement statement, String keyspace) {
